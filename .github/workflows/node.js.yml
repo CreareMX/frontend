@@ -26,6 +26,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: action-yarn
+      uses: comchangs/action-yarn@v0.1-beta
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test

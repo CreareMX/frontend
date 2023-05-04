@@ -19,8 +19,6 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: 18
-    - run: npm ci
-    - run: npm test
     - uses: actions/checkout@master
     - name: Install
       uses: CultureHQ/actions-yarn@master

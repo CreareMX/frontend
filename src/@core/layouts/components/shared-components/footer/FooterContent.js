@@ -14,7 +14,9 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const FooterContent = () => {
   // ** Var
-  const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
+  // const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
+  const hidden = true
+
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>

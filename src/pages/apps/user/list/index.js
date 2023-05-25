@@ -291,7 +291,7 @@ const UserList = ({ apiData }) => {
 
   return (
     <Grid container spacing={6.5}>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         {apiData && (
           <Grid container spacing={6}>
             {apiData.statsHorizontalWithDetails.map((item, index) => {
@@ -303,7 +303,7 @@ const UserList = ({ apiData }) => {
             })}
           </Grid>
         )}
-      </Grid>
+      </Grid> */}
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Search Filters' />

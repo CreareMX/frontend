@@ -101,8 +101,8 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-  password: 'admin',
-  email: 'admin@vuexy.com'
+  password: 'admin1234',
+  email: 'admin@mayoreo.com'
 }
 
 const LoginPage = () => {
@@ -132,10 +132,16 @@ const LoginPage = () => {
 
   const onSubmit = data => {
     const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
+
+    let dataLogin = {
+      nombreUsuario:email,
+      contrasena:password
+    }
+    
+    auth.login(dataLogin, () => {
       setError('email', {
         type: 'manual',
-        message: 'Email or Password is invalid'
+        message: 'Correo o contraseña incorrecta'
       })
     })
   }
@@ -193,7 +199,7 @@ const LoginPage = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.email)}
-                      placeholder='admin@vuexy.com'
+                      placeholder='Correo'
                     />
                   )}
                 />
@@ -246,7 +252,7 @@ const LoginPage = () => {
                 }}
               >
                
-                <LinkStyled href='/forgot-password'>Olvido la contraseña?</LinkStyled>
+                {/* <LinkStyled href='/register'>No tienes cuenta? Crear una</LinkStyled> */}
               </Box>
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 4 }}>
                 Login

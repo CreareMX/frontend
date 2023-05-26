@@ -14,18 +14,20 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const FooterContent = () => {
   // ** Var
-  const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
+  // const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
+  const hidden = true
+
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2 }}>
-        {`© ${new Date().getFullYear()}, Made with `}
+        {`© ${new Date().getFullYear()}, Hecho con `}
         <Box component='span' sx={{ color: 'error.main' }}>
           ❤️
         </Box>
         {` by `}
-        <LinkStyled target='_blank' href='https://pixinvent.com'>
-          Pixinvent
+        <LinkStyled target='_blank' href='#'>
+          Creare
         </LinkStyled>
       </Typography>
       {hidden ? null : (

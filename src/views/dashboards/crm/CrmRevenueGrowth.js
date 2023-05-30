@@ -84,9 +84,9 @@ const CrmRevenueGrowth = () => {
           <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <Typography variant='h6' sx={{ mb: 1.5 }}>
-                Revenue Growth
+                Crecimiento de ingresos
               </Typography>
-              <Typography variant='body2'>Weekly Report</Typography>
+              <Typography variant='body2'>Reporte semanal</Typography>
             </div>
             <div>
               <Typography variant='h5' sx={{ mb: 2 }}>

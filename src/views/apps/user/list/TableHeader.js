@@ -23,22 +23,22 @@ const TableHeader = props => {
         justifyContent: 'space-between'
       }}
     >
-      <Button color='secondary' variant='outlined' startIcon={<Icon icon='tabler:upload' />}>
+      {/* <Button color='secondary' variant='outlined' startIcon={<Icon icon='tabler:upload' />}>
         Export
-      </Button>
+      </Button> */}
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
           size='small'
           value={value}
           sx={{ mr: 4 }}
-          placeholder='Search User'
+          placeholder='Buscar usuario'
           onChange={e => handleFilter(e.target.value)}
         />
 
-        <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
+        {/* <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
-          Add New User
-        </Button>
+          Agregar nuevo usuario
+        </Button> */}
       </Box>
     </Box>
   )

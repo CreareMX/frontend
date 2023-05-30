@@ -125,9 +125,9 @@ const CrmSessions = () => {
   return (
     <Card>
       <CardContent>
-        <Typography variant='h6'>Sessions</Typography>
+        <Typography variant='h6'>Sesiones</Typography>
         <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-          This Month
+          Este mes
         </Typography>
         <ReactApexcharts type='bar' height={94} series={series} options={options} />
         <Box sx={{ gap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>

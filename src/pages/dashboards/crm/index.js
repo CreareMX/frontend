@@ -33,8 +33,8 @@ const CrmDashboard = () => {
             chipText='-12.2%'
             chipColor='default'
             avatarColor='error'
-            title='Total Profit'
-            subtitle='Last week'
+            title='Utilidad total'
+            subtitle='Última semana'
             avatarIcon='tabler:currency-dollar'
           />
         </Grid>
@@ -44,8 +44,8 @@ const CrmDashboard = () => {
             chipText='+25.2%'
             avatarColor='info'
             chipColor='default'
-            title='Total Sales'
-            subtitle='Last week'
+            title='Ventas totales'
+            subtitle='Última semana'
             avatarIcon='tabler:chart-bar'
           />
         </Grid>
@@ -64,8 +64,8 @@ const CrmDashboard = () => {
             chipText='-12.2%'
             chipColor='default'
             avatarColor='error'
-            title='Total Profit'
-            subtitle='Last week'
+            title='Utilidad total'
+            subtitle='Última semana'
             avatarIcon='tabler:currency-dollar'
           />
         </Grid>
@@ -75,8 +75,8 @@ const CrmDashboard = () => {
             chipText='+25.2%'
             avatarColor='info'
             chipColor='default'
-            title='Total Sales'
-            subtitle='Last week'
+            title='Ventas totales'
+            subtitle='Última semana'
             avatarIcon='tabler:chart-bar'
           />
         </Grid>

@@ -75,9 +75,9 @@ const CrmSalesWithAreaChart = () => {
   return (
     <Card>
       <CardContent sx={{ pb: 0 }}>
-        <Typography variant='h6'>Sales</Typography>
+        <Typography variant='h6'>Ventas</Typography>
         <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-          Last Year
+          Último año
         </Typography>
       </CardContent>
       <ReactApexcharts type='area' height={94} series={series} options={options} />

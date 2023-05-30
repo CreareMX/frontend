@@ -64,11 +64,11 @@ const navigation = () => {
     //   ]
     // },
     {
-      title: 'User',
+      title: 'Usuarios',
       icon: 'tabler:user',
       children: [
         {
-          title: 'List',
+          title: 'Lista',
           path: '/apps/user/list'
         },
 

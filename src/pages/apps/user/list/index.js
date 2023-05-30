@@ -54,8 +54,8 @@ const userRoleObj = {
 }
 
 const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
+  activo: 'success',
+  pendiente: 'warning',
   inactive: 'secondary'
 }
 
@@ -117,7 +117,7 @@ const RowOptions = ({ id }) => {
         }}
         PaperProps={{ style: { minWidth: '8rem' } }}
       >
-        <MenuItem
+        {/* <MenuItem
           component={Link}
           sx={{ '& svg': { mr: 2 } }}
           href='/apps/user/view/account'
@@ -129,10 +129,10 @@ const RowOptions = ({ id }) => {
         <MenuItem onClick={handleRowOptionsClose} sx={{ '& svg': { mr: 2 } }}>
           <Icon icon='tabler:edit' fontSize={20} />
           Edit
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
           <Icon icon='tabler:trash' fontSize={20} />
-          Delete
+          Eliminar
         </MenuItem>
       </Menu>
     </>
@@ -144,7 +144,7 @@ const columns = [
     flex: 0.25,
     minWidth: 280,
     field: 'fullName',
-    headerName: 'User',
+    headerName: 'Nombre',
     renderCell: ({ row }) => {
       const { fullName, email } = row
 
@@ -154,8 +154,6 @@ const columns = [
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography
               noWrap
-              component={Link}
-              href='/apps/user/view/account'
               sx={{
                 fontWeight: 500,
                 textDecoration: 'none',
@@ -177,7 +175,7 @@ const columns = [
     flex: 0.15,
     field: 'role',
     minWidth: 170,
-    headerName: 'Role',
+    headerName: 'Rol',
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -195,37 +193,38 @@ const columns = [
       )
     }
   },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }) => {
-      return (
-        <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 190,
-    field: 'billing',
-    headerName: 'Billing',
-    renderCell: ({ row }) => {
-      return (
-        <Typography noWrap sx={{ color: 'text.secondary' }}>
-          {row.billing}
-        </Typography>
-      )
-    }
-  },
+
+  // {
+  //   flex: 0.15,
+  //   minWidth: 120,
+  //   headerName: 'Plan',
+  //   field: 'currentPlan',
+  //   renderCell: ({ row }) => {
+  //     return (
+  //       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'capitalize' }}>
+  //         {row.currentPlan}
+  //       </Typography>
+  //     )
+  //   }
+  // },
+  // {
+  //   flex: 0.15,
+  //   minWidth: 190,
+  //   field: 'billing',
+  //   headerName: 'Pago',
+  //   renderCell: ({ row }) => {
+  //     return (
+  //       <Typography noWrap sx={{ color: 'text.secondary' }}>
+  //         {row.billing}
+  //       </Typography>
+  //     )
+  //   }
+  // },
   {
     flex: 0.1,
     minWidth: 110,
     field: 'status',
-    headerName: 'Status',
+    headerName: 'Estatus',
     renderCell: ({ row }) => {
       return (
         <CustomChip
@@ -244,7 +243,7 @@ const columns = [
     minWidth: 100,
     sortable: false,
     field: 'actions',
-    headerName: 'Actions',
+    headerName: 'Acciones',
     renderCell: ({ row }) => <RowOptions id={row.id} />
   }
 ]
@@ -306,7 +305,7 @@ const UserList = ({ apiData }) => {
       </Grid> */}
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Search Filters' />
+          {/* <CardHeader title='Search Filters' />
           <CardContent>
             <Grid container spacing={6}>
               <Grid item sm={4} xs={12}>
@@ -370,7 +369,7 @@ const UserList = ({ apiData }) => {
                 </FormControl>
               </Grid>
             </Grid>
-          </CardContent>
+          </CardContent> */}
           <Divider sx={{ m: '0 !important' }} />
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
           <DataGrid

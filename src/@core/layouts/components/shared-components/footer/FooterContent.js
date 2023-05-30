@@ -26,7 +26,7 @@ const FooterContent = () => {
           ❤️
         </Box>
         {` by `}
-        <LinkStyled target='_blank' href='#'>
+        <LinkStyled href=''>
           Creare
         </LinkStyled>
       </Typography>

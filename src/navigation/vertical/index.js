@@ -23,8 +23,61 @@ const navigation = () => {
       ]
     },
     {
-      sectionTitle: 'Módulos'
+      title: 'Compras',
+      icon: 'ph:package-light',
+      children: [
+        {
+          title: 'Requesiciones',
+          path: '/requisitions'
+        },
+        {
+          title: 'Ordenes de compra',
+          path: '/requisitions'
+        },
+        {
+          title: 'Proveedores',
+          path: '/requisitions'
+        },
+
+        // {
+        //   title: 'View',
+        //   children: [
+        //     {
+        //       title: 'Account',
+        //       path: '/apps/user/view/account'
+        //     },
+        //     {
+        //       title: 'Security',
+        //       path: '/apps/user/view/security'
+        //     },
+        //     {
+        //       title: 'Billing & Plans',
+        //       path: '/apps/user/view/billing-plan'
+        //     },
+        //     {
+        //       title: 'Notifications',
+        //       path: '/apps/user/view/notification'
+        //     },
+        //     {
+        //       title: 'Connection',
+        //       path: '/apps/user/view/connection'
+        //     }
+        //   ]
+        // }
+      ]
     },
+    {
+      title: 'Almacen',
+      icon: 'ph:package-light',
+      children: [
+        {
+          title: 'OC por recibir',
+
+          // path: '/requisitions'
+        },
+      ]
+    },
+
     
     // {
     //   title: 'Email',
@@ -63,42 +116,52 @@ const navigation = () => {
     //     }
     //   ]
     // },
-    {
-      title: 'Usuarios',
-      icon: 'tabler:user',
+
+       {
+      title: 'Admon del sistema',
+      icon: 'material-symbols:settings-outline',
       children: [
         {
           title: 'Lista',
           path: '/apps/user/list'
         },
-
-        // {
-        //   title: 'View',
-        //   children: [
-        //     {
-        //       title: 'Account',
-        //       path: '/apps/user/view/account'
-        //     },
-        //     {
-        //       title: 'Security',
-        //       path: '/apps/user/view/security'
-        //     },
-        //     {
-        //       title: 'Billing & Plans',
-        //       path: '/apps/user/view/billing-plan'
-        //     },
-        //     {
-        //       title: 'Notifications',
-        //       path: '/apps/user/view/notification'
-        //     },
-        //     {
-        //       title: 'Connection',
-        //       path: '/apps/user/view/connection'
-        //     }
-        //   ]
-        // }
+        {
+          title: 'Personas',
+          children: [
+            {
+              title: 'Lista',
+              path: '/people'
+            },
+            {
+              title: 'Tipo de personas',
+              children: [
+                {
+                  title: 'Lista',
+                  path: '/persons-type'
+                },
+        
+              
+              ]
+            },
+    
+          
+          ]
+        },
+        {
+          title: 'Sucursales',
+          path: '/branch-office',
+        },
+        {
+          title: 'Almacenes',
+          path: '/warehouse',
+        },
+        {
+          title: 'Tipo de almacenes',
+          path: '/warehouse-type',
+        },
       ]
     },
+   
 
     // {
     //   title: 'Roles & Permissions',

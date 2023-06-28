@@ -31,13 +31,13 @@ const TableHeader = props => {
           size='small'
           value={value}
           sx={{ mr: 4 }}
-          placeholder='Buscar usuario'
+          placeholder='Buscar'
           onChange={e => handleFilter(e.target.value)}
         />
 
         <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
-          Agregar nuevo usuario
+          Nuevo tipo de usuario
         </Button>
       </Box>
     </Box>

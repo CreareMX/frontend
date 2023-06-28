@@ -2,6 +2,8 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -20,24 +22,36 @@ const TableHeader = props => {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between'
       }}
     >
       {/* <Button color='secondary' variant='outlined' startIcon={<Icon icon='tabler:upload' />}>
         Export
       </Button> */}
+      <Typography
+                noWrap
+                sx={{
+                  fontSize:'22px',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                Tipo de almacen
+              </Typography>
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
         <TextField
           size='small'
           value={value}
           sx={{ mr: 4 }}
-          placeholder='Buscar usuario'
+          placeholder='Buscar'
           onChange={e => handleFilter(e.target.value)}
         />
 
         <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
-          Agregar nuevo usuario
+          Nuevo tipo de alamacen
         </Button>
       </Box>
     </Box>

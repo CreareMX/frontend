@@ -133,9 +133,13 @@ const LoginPage = () => {
   const onSubmit = data => {
     const { email, password } = data
 
-    let dataLogin = {
-      nombreUsuario:email,
-      contrasena:password
+    // let dataLogin = {
+    //   nombreUsuario:email,
+    //   contrasena:password
+    // }
+       let dataLogin = {
+      nombreUsuario:'admin',
+      contrasena:'admin'
     }
     
     auth.login(dataLogin, () => {

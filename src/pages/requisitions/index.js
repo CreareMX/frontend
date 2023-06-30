@@ -95,7 +95,7 @@ const PersonsType = ({ apiData }) => {
    
   
     const handleEdit = (id) => {
-      router.push({pathname: `${router.pathname}/${id}`, query:router.query}, undefined, { shallow: true })
+      router.push(`requisitions/${id}`, undefined, {shallow:true})
 
     }
 

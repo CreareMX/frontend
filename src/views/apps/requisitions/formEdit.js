@@ -232,7 +232,7 @@ const FormLayoutsSeparator = () => {
     getbranchOffices()    
     getAllOrderDetail()
     getProductsbyProvider()
-  },[router])
+  },[router.query.id])
 
   const RowOptions = ({ id, data }) => {
     // ** Hooks

@@ -95,7 +95,7 @@ const PersonsType = ({ apiData }) => {
    
   
     const handleEdit = (id) => {
-        router.push({pathname: `${router.pathname}/${id}`, query:router.query})
+        router.push({pathname: `${router.pathname}/${id}`, query:router.query}, { shallow: true })
 
     }
 
@@ -205,7 +205,7 @@ const PersonsType = ({ apiData }) => {
       minWidth: 280,
       field: 'fecha',
       headerName: 'Fecha',
-      renderCell: ({ row }) => {
+      renderCell: ({ fecha , row }) => {
 
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -229,11 +229,12 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 280,
-      field: 'proveedor',
+      field: 'nombre',
       headerName: 'Proveedor',
+      valueGetter: params => params.row.cliente.nombre,
       renderCell: ({ row }) => {
         const { cliente } = row
-  
+
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>

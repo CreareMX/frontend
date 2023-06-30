@@ -227,7 +227,7 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 280,
-      field: 'correo',
+      field: 'email',
       headerName: 'Correo',
       renderCell: ({ row }) => {
         const { email } = row

@@ -179,7 +179,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {new Date(row.fecha).toLocaleDateString('en-US')}
+                {new Date(row.fecha).toLocaleDateString('es-MX')}
               </Typography>
             </Box>
           </Box>

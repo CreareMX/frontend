@@ -3,41 +3,33 @@ const navigation = () => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
+      path: '/dashboards/crm',
+
       
       // badgeContent: 'new',
       badgeColor: 'error',
-      children: [
-        // {
-        //   title: 'Analytics',
-        //   path: '/dashboards/analytics'
-        // },
-        {
-          title: 'CRM',
-          path: '/dashboards/crm'
-        }
-
-        // {
-        //   title: 'eCommerce',
-        //   path: '/dashboards/ecommerce'
-        // }
-      ]
     },
     {
       title: 'Compras',
-      icon: 'ph:package-light',
+      icon: 'ph:bag',
       children: [
         {
-          title: 'Requesiciones',
+          title: 'Requisiciones',
           path: '/requisitions'
         },
         {
           title: 'Ordenes de compra',
-          path: '/requisitions'
+          path: '/purchase-orders'
         },
         {
           title: 'Proveedores',
-          path: '/requisitions'
+          path: '/providers'
         },
+
+        // {
+        //   title: 'Proveedores',
+        //   path: '/requisitions'
+        // },
 
         // {
         //   title: 'View',
@@ -67,13 +59,12 @@ const navigation = () => {
       ]
     },
     {
-      title: 'Almacen',
+      title: 'Almacén',
       icon: 'ph:package-light',
       children: [
         {
           title: 'OC por recibir',
-
-          // path: '/requisitions'
+          path: '/orders-to-receive'
         },
       ]
     },
@@ -121,32 +112,25 @@ const navigation = () => {
       title: 'Admon del sistema',
       icon: 'material-symbols:settings-outline',
       children: [
-        {
-          title: 'Lista',
-          path: '/apps/user/list'
-        },
-        {
-          title: 'Personas',
-          children: [
-            {
-              title: 'Lista',
-              path: '/people'
-            },
-            {
-              title: 'Tipo de personas',
-              children: [
-                {
-                  title: 'Lista',
-                  path: '/persons-type'
-                },
-        
-              
-              ]
-            },
+        // {
+        //   title: 'Usuarios',
+        //   path: '/apps/user/list'
+        // },
+        // {
+        //   title: 'Equipo de trabajo',
+        //   children: [
+        //     {
+        //       title: 'Personas',
+        //       path: '/people'
+        //     },
+        //     {
+        //       title: 'Tipo de personas',
+        //       path: '/persons-type'
+        //     },
     
           
-          ]
-        },
+        //   ]
+        // },
         {
           title: 'Sucursales',
           path: '/branch-office',

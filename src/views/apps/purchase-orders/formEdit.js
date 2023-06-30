@@ -30,17 +30,18 @@ import Icon from 'src/@core/components/icon'
 
 
 // ** Next Imports
+import Link from 'next/link'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
-import { DataGrid, esES } from '@mui/x-data-grid'
+import { DataGrid,esES } from '@mui/x-data-grid'
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
 
 // ** Icon Imports
 
 // ** Store Imports
-import { Provider, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
@@ -60,7 +61,7 @@ import axios from 'axios'
 import TableHeader from 'src/views/apps/branch-office/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getAllProductsbyIdProvider } from 'src/api/RequestApi'
+import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getRequesitionById, updateRequesitions, getOrderDetail } from 'src/api/RequestApi'
 import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -79,6 +80,7 @@ const FormLayoutsSeparator = () => {
   const router = useRouter()
 
   // ** States
+  const { id } = router.query
   const [date, setDate] = useState(null)
   const [language, setLanguage] = useState([])
   const [productList, setProductList] = useState([])
@@ -92,7 +94,6 @@ const FormLayoutsSeparator = () => {
   const [warehouseSelected, setWarehouseSelected] = useState(null)
   const [branchOfficeSelected,setBranchOfficeSelected] = useState(null)
   const [productSelected, setProductSelected] = useState('')
-  const [providerId, setProviderId] = useState('')
   const [count,setCount] = useState('')
   const [comments, setComments] = useState('')
 
@@ -123,60 +124,78 @@ const FormLayoutsSeparator = () => {
   }
 
   const getWarehouse =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllWarehouse()
-        if(response.status === 200){
-          setWarehouse(response.data)
-          setLoading(false)
+    // try {
+    //   setLoading(true)
+    //     const response = await getAllWarehouse()
+    //     if(response.status === 200){
+    //       setWarehouse(response.data)
+    //       setLoading(false)
 
-        }
+    //     }
         
-    } catch (error) {
-      console.log(error)
-    }
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    const almacen = [
+        {
+            "id": 5,
+            "descripcion": "Almacem principal",
+            "nombre": "Mérida",
+            "codigo": "C12432",
+            "idTipoAlmacen": 1,
+        },
+        {
+            "id": 4,
+            "descripcion": "Almacen secundario",
+            "nombre": "Valladolid",
+            "codigo": "C43423",
+            "idTipoAlmacen": 3,
+        }
+    ]
+        setWarehouse(almacen)
+
   }
 
   const getbranchOffices =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllBranchOffice()
-        if(response.status === 200){
-          setBranhOffice(response.data)
-          setLoading(false)
+    // try {
+    //   setLoading(true)
+    //     const response = await getAllBranchOffice()
+    //     if(response.status === 200){
+    //       setBranhOffice(response.data)
+    //       setLoading(false)
 
-        }
+    //     }
         
-    } catch (error) {
-      console.log(error)
-    }
+    // } catch (error) {
+    //   console.log(error)
+    // }
+
+    const sucursales = [
+        {
+            "nombre": "Mérida",
+            "id": 1,
+            "domicilio": "C57 # 343 x70 y 72 Centro",
+            "telefono": "9994335363"
+        },
+        {
+            "nombre": "Valladolid",
+            "id": 2,
+            "domicilio": "C5h #435 x 20 y 24 Centro",
+            "telefono": "9236245356"
+        }
+    ]
+
+    setBranhOffice(sucursales)
   }
 
-  const getProductsbyProvider =  async(id) =>{
-    try {
-      setLoading(true)
-        const response = await getAllProductsbyIdProvider(id)
-        if(response.status === 200){
-          setProducts(response.data)
-          console.log(response.data)
-          setLoading(false)
-
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const getAllProductsProvider =  async() =>{
+  const getProductsbyProvider =  async() =>{
     try {
       setLoading(true)
         const response = await getAllProducts()
-        console.log("🚀 ~ file: form.js:175 ~ getAllProductsProvider ~ response:", response)
         if(response.status === 200){
           setProducts(response.data)
-          console.log(response.data)
           setLoading(false)
+          
 
         }
         
@@ -184,32 +203,44 @@ const FormLayoutsSeparator = () => {
       console.log(error)
     }
   }
+
+  const getRequisition = async() =>{
+    try {
+        setLoading(true)
+          const response = await getRequesitionById(id)
+          if(response.status === 200){
+            setLoading(false)
+            setProviderSelectd(response.data.cliente)
+            setBranchOfficeSelected(response.data.sucursal)
+            setWarehouseSelected(response.data.almacen)
+            setComments(response.data.comentarios)
+          }
+          
+      } catch (error) {
+        console.log(error)
+      }    
+    
+}
+
+
+
 
   useEffect(()=>{
     getPeople()
     getWarehouse()
-    getbranchOffices()
-    getAllProductsProvider()
-  },[])
+    getRequisition()
+    getbranchOffices()    
+    getAllOrderDetail()
+    getProductsbyProvider()
+  },[router])
 
   const RowOptions = ({ id, data }) => {
     // ** Hooks
     const dispatch = useDispatch()
   
     // ** State
-    const [anchorEl, setAnchorEl] = useState(null)
-    const rowOptionsOpen = Boolean(anchorEl)
-  
-  
-  
-    const handleRowOptionsClick = event => {
-      setAnchorEl(event.currentTarget)
-    }
-  
-    const handleRowOptionsClose = () => {
-      setAnchorEl(null)
-    }
-  
+    const [anchorEl, setAnchorEl] = useState(null)  
+
    
   
     const handleDelete = () => {
@@ -335,9 +366,9 @@ const FormLayoutsSeparator = () => {
     }, 
     {
       flex: 0.25,
-      width: 100,
-      minWidth: 100,
-      maxWidth: 100,
+      width: 150,
+      minWidth: 150,
+      maxWidth: 150,
       field: 'cantidad',
       headerName: 'Cantidad',
       renderCell: ({ row }) => {
@@ -365,9 +396,9 @@ const FormLayoutsSeparator = () => {
       flex: 0.25,
       width: 100,
       minWidth: 100,
-      maxWidth: 100,
+      maxWidth: 150,
       field: 'precio',
-      headerName: 'Precio',
+      headerName: 'precio',
       renderCell: ({ row }) => {
   
         return (
@@ -389,16 +420,17 @@ const FormLayoutsSeparator = () => {
         )
       }
     }, 
-    {
-      flex: 0.1,
-      width: 100,
-      minWidth: 100,
-      maxWidth: 100,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Accion',
-      renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
-    }
+
+    // {
+    //   flex: 0.1,
+    //   width: 100,
+    //   minWidth: 100,
+    //   maxWidth: 100,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Accion',
+    //   renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
+    // }
   ]
 
 
@@ -407,52 +439,31 @@ const FormLayoutsSeparator = () => {
     console.log("🚀 ~ file: form.js:279 ~ handleChangeSucursal ~ newValue:", newValue)
   }
 
-  const onSubmit = async(data) =>{
-
-    if(productList.length === 0){
-      toast.error('Necesitas agregar por lo menos un producto a la lista')
-       
-      return
-    }
-
-    let date = new Date().toISOString();
-
-    let idProvider = productList[0]?.idProveedor
-
-    let dataReq = {
-      idCliente: idProvider,
-      idEmpleadoCrea: 7,
-      fecha: date,
-      fechaCompromiso:date,
-      fechaEnvio:date,
-      formaEnvio:'terestre',
-      idAlmacen: warehouseSelected.id,
-      idSucursal: branchOfficeSelected.id,
-      comentarios: comments,
-      idEstado:2
-    }
-
+  const getAllOrderDetail = async() =>{
 
     try {
-      const response = await postRequesitions(dataReq, 1)
+      const response = await getOrderDetail(id)
+      
       
       if(response.status === 200){
+        
+        const product = []
 
-        let idReq = response.data.id
-        productList.forEach(async(element) => {
-
-          let dataDetail = {
-            idOrdenCompra: idReq,
-            idProducto: element.id,
-            cantidad: parseInt(element.cantidad),
-            descuento: 0
+        response.data.map(e=>{
+          let data = {
+            id: e?.idProducto,
+            nombre: e?.producto?.nombre,
+            descripcion: e?.producto.descripcion,
+            cantidad: e?.cantidad,
+            precio:e?.producto.precios[0]?.monto,
+            proveedor:e.ordenCompra?.cliente?.nombre
           }
-          const response = await postRequesitionsDetail(dataDetail, 1)
-          
-        });
-      
-        toast.success('Requisición agregada con éxito')
-        router.push('/requisitions')
+          product.push(data)
+        })
+
+        setProductList(product)
+
+           
       }
       
       
@@ -460,25 +471,71 @@ const FormLayoutsSeparator = () => {
       console.log(error)
     }
 
+  }
+
+  const onSubmit = async(data) =>{
+
+    let date = new Date().toISOString();
+
+    let dataReq = {
+      id: id,
+      idEstado:5,
+      fecha: date,
+      fechaCompromiso:date,
+      fechaEnvio:date,
+      idCliente: parseInt(providerSelected.id),
+      idEmpleadoCrea: 7,
+      idAlmacen: warehouseSelected.id,
+      idSucursal: branchOfficeSelected.id,
+      comentarios: comments,
+      formaEnvio:'terestre'
+    }
+
+
+    try {
+      const response = await updateRequesitions(dataReq, 1)
+      console.log("🚀 ~ file: form.js:355 ~ onSubmit ~ response:", response)
+      
+      if(response.status === 200){
+
+        // let idReq = response.data.id
+        // productList.forEach(async(element) => {
+
+        //   let dataDetail = {
+        //     idOrdenCompra: idReq,
+        //     idProducto: element.id,
+        //     cantidad: parseInt(element.cantidad),
+        //     descuento: 0
+        //   }
+        //   console.log("🚀 ~ file: form.js:369 ~ productList.forEach ~ dataDetail:", dataDetail)
+
+        //   const response = await postRequesitionsDetail(dataDetail, 1)
+
+          
+        // });
+      
+        toast.success('Requisición actualizada con éxito')
+        router.push('/purchase-orders')
+      }
+      
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+    console.log(dataReq)
 
   }
 
   const addProductsToList = (data)=>{
 
-    if(data == ''){
-      toast.error('Tienes que seleccionar por lo menos un producto de la lista')
 
-      return
-    }
 
     const product = {
-      id: data?.idProducto,
-      nombre: data?.producto?.nombre,
-      descripcion: data?.producto?.descripcion,
-      cantidad: parseInt(count),
-      precio:data?.producto?.precios[0]?.monto,
-      idProveedor:data?.idProveedor,
-      proveedor:data?.proveedor?.nombre
+      id: data?.id,
+      nombre: data?.nombre,
+      descripcion: data?.descripcion,
+      cantidad: parseInt(count)
     }
 
     const found = productList.some(el => el.id === data.id);
@@ -486,7 +543,6 @@ const FormLayoutsSeparator = () => {
     if(found){
       setCount('')
       setProductSelected('')
-      setProviderId('')
       toast.error('Ya existe el producto en la lista')
 
     }else if(count ===''){
@@ -496,7 +552,6 @@ const FormLayoutsSeparator = () => {
       setProductList((old)=> [...old, product])
       setCount('')
       setProductSelected('')
-      setProviderId('')
     }
 
 
@@ -523,18 +578,16 @@ const FormLayoutsSeparator = () => {
   return (
     <>
     <Card>
-      <CardHeader title='Agregar Requsision' />
+      <CardHeader title='Editar Requsision' />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           <Grid container spacing={5}>
-         
-         
-           
            
             <Grid item xs={12} sm={12}>
             <Autocomplete
             required
+            value={warehouseSelected || ''}
             onChange={(e, data) =>setWarehouseSelected(data)}
                 options={warehouse}
                 id='autocomplete-outlined'
@@ -545,6 +598,7 @@ const FormLayoutsSeparator = () => {
             <Grid item xs={12} sm={6}>
             <Autocomplete
             required
+            value={branchOfficeSelected || ''}
             onChange={(e, data) =>setBranchOfficeSelected(data)}
                 options={branchOffice}
                 id='autocomplete-outlined'
@@ -554,48 +608,39 @@ const FormLayoutsSeparator = () => {
             </Grid>
            
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth name='comentarios' onChange={(value) => setComments(value.target.value)} label='Comentarios' />
+              <TextField value={comments || ''} fullWidth name='comentarios' onChange={(value) => setComments(value.target.value)} label='Comentarios' />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                Agregar Productos
+                Editar Productos
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
             <Autocomplete
             
             value={productSelected || ''}
-                onChange={(e, data) =>{
-                  setProviderId(data?.proveedor)
-                  setProductSelected(data)
-                }}
+                onChange={(e, data) =>setProductSelected(data)}
                 options={products || []}
                 id='autocomplete-outlined'
-                getOptionLabel={option => option?.producto?.nombre || ''}
+                getOptionLabel={option => option?.nombre || ''}
                 renderInput={params => <TextField {...params}  label='Producto' />}
             />
-            
             </Grid>
             <Grid item xs={12} sm={6}>
             <Autocomplete
             noOptionsText={'Sin resultados'}
-            
-            value={providerId || ''}
+            required
+            value={providerSelected || ''}
             onChange={(e, data) =>{
-              getProductsbyProvider(data?.id)
-              setProviderSelectd(data)
-              setProductSelected('')
-              setProviderId(data)
-              setCount('')
-            }}
+              setProviderSelectd(data)}}
                 options={providers}
                 id='autocomplete-outlined'
                 getOptionLabel={option => option.nombre || ''}
-                renderInput={params => <TextField {...params} label='Proveedor' />}
+                renderInput={params => <TextField {...params} required label='Proveedor' />}
             />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth name='descripcion' value={productSelected?.producto?.descripcion || ''} label='Descripción' InputProps={{
+              <TextField fullWidth name='comentarios' value={productSelected?.descripcion || ''} label='Descripción' InputProps={{
     readOnly: true,
   }} />
             </Grid>
@@ -606,12 +651,10 @@ const FormLayoutsSeparator = () => {
                  }} label='Cantidad' />
             </Grid>
             <Grid item xs={12} sm={2} sx={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-            <Button onClick={()=>{
-              getAllProductsProvider()
-              addProductsToList(productSelected)}} size='medium' sx={{ mr: 2 }} variant='outlined'>
+            <Button onClick={()=>{addProductsToList(productSelected)}} size='medium' sx={{ mr: 2 }} variant='outlined'>
             Agregar
           </Button>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={12}>
             <DataGrid
               autoHeight
@@ -630,7 +673,7 @@ const FormLayoutsSeparator = () => {
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
-            Guardar
+            Actualizar
           </Button>
         </CardActions>
       </form>

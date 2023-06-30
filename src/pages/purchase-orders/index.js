@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,7 +19,7 @@ import CardHeader from '@mui/material/CardHeader'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
-import { DataGrid, esES} from '@mui/x-data-grid'
+import { DataGrid, esES } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
 
@@ -42,16 +44,20 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/persons-type/TableHeader'
-import AddUserDrawer from 'src/views/apps/persons-type/AddUserDrawer'
-import SidebarEditPeople from 'src/views/apps/persons-type/EditPersonDrawer'
-import { getAllTyperPersons, deletePersonType } from 'src/api/RequestApi'
+import TableHeader from 'src/views/apps/purchase-orders/TableHeader'
+import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
+import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
+import { getAllRequesitions, changeStatusReqById } from 'src/api/RequestApi'
+import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 
 
 
 
 const PersonsType = ({ apiData }) => {
+
+  const router = useRouter()
+
   // ** State
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -87,15 +93,29 @@ const PersonsType = ({ apiData }) => {
       setAnchorEl(null)
     }
   
-    const handleEdit = () => {
-      setCurrentPerson(data)
-      setEditUserOpen(!editUserOpen)
-      handleRowOptionsClose()
+   
+  
+    const handleEdit = (id) => {
+        router.push({pathname: `${router.pathname}/${id}`, query:router.query})
+
     }
 
+    const rechazarOC = async(id) =>{
+      try {
+       const response = await changeStatusReqById(id,10,1)
+       if(response.status === 200){
+         toast.success('Requisición rechazada correctamente')
+         getRequesitions()
+       }
+       
+    } catch (error) {
+     console.log(error)
+    }
+    }
+    
 
   
-    // const getTyperPersons =  async() =>{
+    // const getRequesitions =  async() =>{
     //   try {
     //       const response = await getAllTyperPersons()
     //       if(response.status === 200){
@@ -108,7 +128,6 @@ const PersonsType = ({ apiData }) => {
     //     console.log(error)
     //   }
     // }
-    
     
   
     return (
@@ -141,22 +160,32 @@ const PersonsType = ({ apiData }) => {
             View
           </MenuItem>
           */}
-          <MenuItem onClick={handleEdit} sx={{ '& svg': { mr: 2 } }}>
+          <MenuItem onClick={()=>{handleEdit(data.id)}} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:edit' fontSize={20} />
             Editar
           </MenuItem> 
           <MenuItem onClick={()=>{
-            const nombre = data?.nombre
-            setNombre(nombre)
-            setId(data.id)
-            setOpenModal(true)
+            cancelarOC(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:trash' fontSize={20} />
-            Eliminar
+            <Icon icon='mdi:file-cancel-outline' fontSize={20} />
+            Cancelar
+          </MenuItem>
+          <MenuItem onClick={()=>{
+           rechazarOC(data.id)
+            }}
+             sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='iconoir:cancel' fontSize={20} />
+            Rechazar
+          </MenuItem>
+          <MenuItem onClick={()=>{
+            validarOC(data.id)
+            }}
+             sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='ic:outline-check' fontSize={20} />
+            Validar
           </MenuItem>
         </Menu>
-       
       </>
     )
   }
@@ -165,10 +194,36 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 280,
-      field: 'nombre',
-      headerName: 'Nombre',
+      field: 'fecha',
+      headerName: 'Fecha',
       renderCell: ({ row }) => {
-        const { nombre, email } = row
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {new Date(row.fecha).toLocaleDateString('en-US')}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'proveedor',
+      headerName: 'Proveedor',
+      renderCell: ({ row }) => {
+        const { cliente } = row
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -182,7 +237,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {nombre}
+                {cliente.nombre}
               </Typography>
             </Box>
           </Box>
@@ -242,10 +297,9 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 280,
-      field: 'esPersonaMoral',
-      headerName: 'Persona moral',
+      field: 'comentarios',
+      headerName: 'Comentarios',
       renderCell: ({ row }) => {
-        const { esPersonaMoral } = row
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -259,8 +313,83 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {esPersonaMoral === true ? 'Sí' : 'No'}
+                {row.comentarios}
               </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'alamcen',
+      headerName: 'Almacen',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.almacen.nombre}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'sucursal',
+      headerName: 'Sucursal',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.sucursal.nombre}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'estado',
+      headerName: 'Estado',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <CustomChip
+          rounded
+          skin='light'
+          size='small'
+          label={row.estado.nombre === 'OC_PENDIENTE' ? 'POR APROBAR' : row.estado.nombre === 'OC_CANCELADA' ? 'CANCELADA' : ''}
+          color={row.estado.nombre === 'OC_PENDIENTE' ? 'info' : row.estado.nombre === 'OC_CANCELADA' ? 'error' : ''}
+          sx={{ textTransform: 'capitalize' }}
+        />
             </Box>
           </Box>
         )
@@ -269,7 +398,7 @@ const PersonsType = ({ apiData }) => {
   
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 200,
       sortable: false,
       field: 'actions',
       headerName: 'Acciones',
@@ -296,14 +425,18 @@ const PersonsType = ({ apiData }) => {
     setValue(val)
   }, [])
 
+  
 
-  const getTyperPersons =  async() =>{
+
+  const getRequesitions =  async() =>{
     try {
       setLoading(true)
-        const response = await getAllTyperPersons()
+        const response = await getAllRequesitions()
         if(response.status === 200){
           console.log(response.data)
-          setTypePersons(response.data)
+          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'OC_PENDIENTE' || e.estado.nombre === 'OC_CANCELADA')
+          purchaseOrders.reverse()
+          setTypePersons(purchaseOrders)
           setLoading(false)
 
         }
@@ -312,38 +445,62 @@ const PersonsType = ({ apiData }) => {
       console.log(error)
     }
   }
+
+  const validarOC = async(id) =>{
+    try {
+     const response = await changeStatusReqById(id,8,1)
+     if(response.status === 200){
+       toast.success('Orden de compra validada correctamente')
+       getRequesitions()
+     }
+     
+ } catch (error) {
+   console.log(error)
+ }
+}
+
+const cancelarOC = async(id) =>{
+ try {
+  const response = await changeStatusReqById(id,9,1)
+  if(response.status === 200){
+    toast.success('Orden de compra cancelada correctamente')
+    getRequesitions()
+  }
+  
+} catch (error) {
+console.log(error)
+}
+}
   
   const handleDelete = async() => {
   
     setOpenModal(false)
-    console.log(id)
-
     try {
       let data = {id}
       
-      const response = await deletePersonType(data, 1)
+      const response = await deleteBranchOffice(data, 1)
 
       if(response.status == 200){
-       await getTyperPersons()
-        toast.success('Tipo de usuario eliminado con éxito!')
+       await getRequesitions()
+        toast.success('Sucursal eliminada con éxito')
 
       }
       
     } catch (error) {
-      console.log("🚀 ~ file: index.js:100 ~ handleDelete ~ error:", error)
+      console.log(error)
     }
 
   }
 
   useEffect(() => {
-    getTyperPersons()
+    getRequesitions()
   },[]);
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setEditUserOpen(!editUserOpen)
 
   const sucessSubmit = () =>{
-    getTyperPersons()
+    getRequesitions()
   }
 
   const closeModal = () =>{
@@ -451,8 +608,9 @@ const PersonsType = ({ apiData }) => {
 
       <AddUserDrawer open={addUserOpen} sucess={sucessSubmit} toggle={toggleAddUserDrawer} />
       <SidebarEditPeople open={editUserOpen} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
+
       { openModal &&
-       <DialogAlert open={openModal} title={'Desea eliminar el tipo de persona ' + nombre} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+       <DialogAlert open={openModal} title={'Desea cancelar la orden de compra'} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
         }
     </Grid>
   )

@@ -140,8 +140,15 @@ export const getAllTyperPersons = async () =>{
        return axiosApi.delete(_URL, {data: data})
    }
 
-   export const getAllProducts = async (id) =>{
-    const _URL = `https://backend.administrare.com.mx/api/compras/Productos/all`;
+   
+   export const getAllProductsbyIdProvider = async (id) =>{
+    const _URL = `/api/Compras/ProveedorProductos/porproveedor/${id}`;
+
+       return axiosApi.get(_URL)
+   }
+
+   export const getAllProducts = async () =>{
+    const _URL = `api/Compras/ProveedorProductos/all`;
 
        return axiosApi.get(_URL)
    }
@@ -166,6 +173,34 @@ export const getAllTyperPersons = async () =>{
     const _URL = `/api/Compras/DetallesOrdenesCompras/${idUser}`;
    
        return axiosApi.post(_URL, data)
+   }
+
+   export const getRequesitionById = async (id) =>{
+    
+    const _URL =`/api/Compras/OrdenesCompras/id/${id}`;
+   
+       return axiosApi.get(_URL)
+   }
+
+   export const getOrderDetail = async (id) =>{
+    
+    const _URL =`/api/Compras/DetallesOrdenesCompras/ordencompra/${id}`;
+   
+       return axiosApi.get(_URL)
+   }
+
+   export const updateRequesitions = async ( data, idUser) =>{
+    
+    const _URL = `/api/Compras/OrdenesCompras/${idUser}`;
+   
+       return axiosApi.put(_URL, data)
+   }
+
+   export const changeStatusReqById = async ( idOrder,idEstatus, idUser) =>{
+    
+    const _URL = `/api/Compras/OrdenesCompras/estado/${idOrder}/${idEstatus}/${idUser}`;
+   
+       return axiosApi.put(_URL)
    }
 
 

@@ -19,7 +19,7 @@ import CardHeader from '@mui/material/CardHeader'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, esES } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
 
@@ -44,11 +44,10 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/branch-office/TableHeader'
+import TableHeader from 'src/views/apps/requisitions/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllRequesitions } from 'src/api/RequestApi'
-import { deleteBranchOffice } from 'src/api/RequestApi'
+import { getAllRequesitions, changeStatusReqById, deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 
 
@@ -95,11 +94,37 @@ const PersonsType = ({ apiData }) => {
   
    
   
-    const handleEdit = () => {
-      setCurrentPerson(data)
-      setEditUserOpen(!editUserOpen)
-      handleRowOptionsClose()
+    const handleEdit = (id) => {
+        router.push({pathname: `${router.pathname}/${id}`, query:router.query})
+
     }
+
+    const validarReq = async(id) =>{
+         try {
+          const response = await changeStatusReqById(id,5,1)
+          if(response.status === 200){
+            toast.success('Requisición validada correctamente')
+            getRequesitions()
+          }
+          
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    const cancelarReq = async(id) =>{
+      try {
+       const response = await changeStatusReqById(id,4,1)
+       if(response.status === 200){
+         toast.success('Requisición cancelada correctamente')
+         getRequesitions()
+       }
+       
+   } catch (error) {
+     console.log(error)
+   }
+ }
+ 
 
   
     // const getRequesitions =  async() =>{
@@ -147,19 +172,27 @@ const PersonsType = ({ apiData }) => {
             View
           </MenuItem>
           */}
-          <MenuItem onClick={handleEdit} sx={{ '& svg': { mr: 2 } }}>
+          <MenuItem onClick={()=>{handleEdit(data.id)}} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:edit' fontSize={20} />
             Editar
           </MenuItem> 
+          {data.estado.nombre === 'REQ_PENDIENTE' &&
+      <MenuItem onClick={()=>{
+        cancelarReq(data.id)
+         }}
+          sx={{ '& svg': { mr: 2 } }}>
+         <Icon icon='mdi:file-cancel-outline' fontSize={20} />
+         Cancelar
+       </MenuItem>
+          }
+          
+    
           <MenuItem onClick={()=>{
-            const nombre = data?.nombre
-            setNombre(nombre)
-            setId(data.id)
-            setOpenModal(true)
+            validarReq(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:trash' fontSize={20} />
-            Eliminar
+            <Icon icon='ic:outline-check' fontSize={20} />
+            Validar
           </MenuItem>
         </Menu>
       </>
@@ -167,6 +200,32 @@ const PersonsType = ({ apiData }) => {
   }
   
   const columns = [
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'fecha',
+      headerName: 'Fecha',
+      renderCell: ({ row }) => {
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {new Date(row.fecha).toLocaleDateString('en-US')}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
     {
       flex: 0.25,
       minWidth: 280,
@@ -332,7 +391,7 @@ const PersonsType = ({ apiData }) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
-              <Typography
+              {/* <Typography
                 noWrap
                 sx={{
                   fontWeight: 500,
@@ -341,8 +400,16 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.estado.nombre === 'REQUISICION' ? 'Por aprobar' : ''}
-              </Typography>
+                {row.estado.nombre === 'REQ_PENDIENTE' ? 'POR APROBAR' : row.estado.nombre === 'REQ_CANCELADA' ? 'CANCELADA' : row.estado.nombre === 'OC_RECHAZADA' ? 'RECHAZADA' : ''}
+              </Typography> */}
+              <CustomChip
+          rounded
+          skin='light'
+          size='small'
+          label={row.estado.nombre === 'REQ_PENDIENTE' ? 'POR APROBAR' : row.estado.nombre === 'REQ_CANCELADA' ? 'CANCELADA' : row.estado.nombre === 'OC_RECHAZADA' ? 'RECHAZADA' : ''}
+          color={row.estado.nombre === 'REQ_PENDIENTE' ? 'info' : row.estado.nombre === 'REQ_CANCELADA' ? 'error' : row.estado.nombre === 'OC_RECHAZADA' ? 'error' : ''}
+          sx={{ textTransform: 'capitalize' }}
+        />
             </Box>
           </Box>
         )
@@ -386,8 +453,9 @@ const PersonsType = ({ apiData }) => {
       setLoading(true)
         const response = await getAllRequesitions()
         if(response.status === 200){
-          console.log(response.data)
-          setTypePersons(response.data)
+          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'REQ_PENDIENTE' || e.estado.nombre === 'REQ_CANCELADA'|| e.estado.nombre === 'OC_RECHAZADA'  )
+          purchaseOrders.reverse()
+          setTypePersons(purchaseOrders)
           setLoading(false)
 
         }
@@ -521,6 +589,7 @@ const PersonsType = ({ apiData }) => {
             rowHeight={62}
             rows={typePersons}
             columns={columns}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             disableRowSelectionOnClick
             loading={loading}
             pageSizeOptions={[10, 25, 50]}
@@ -534,7 +603,7 @@ const PersonsType = ({ apiData }) => {
       <SidebarEditPeople open={editUserOpen} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
 
       { openModal &&
-       <DialogAlert open={openModal} title={'Desea eliminar la sucursal ' + nombre} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+       <DialogAlert open={openModal} title={'Desea cancelar la orden de compra'} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
         }
     </Grid>
   )

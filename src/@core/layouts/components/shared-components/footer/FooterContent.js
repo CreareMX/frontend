@@ -25,10 +25,10 @@ const FooterContent = () => {
         {/* <Box component='span' sx={{ color: 'error.main' }}>
           ❤️
         </Box> */}
-        {` en `}
-        <LinkStyled href=''>
+        {` en México `}
+        {/* <LinkStyled href=''>
             México
-        </LinkStyled>
+        </LinkStyled> */}
       </Typography>
       {hidden ? null : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>

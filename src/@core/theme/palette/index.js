@@ -53,7 +53,7 @@ const DefaultPalette = (mode, skin) => {
     },
     warning: {
       light: '#FFAB5A',
-      main: '#FF9F43',
+      main: '#f6c217',
       dark: '#E08C3B',
       contrastText: whiteColor
     },

@@ -1,6 +1,6 @@
 import axios from "axios";
 import cookie from "js-cookie";
-
+import { logoutAuth } from "src/hooks/useLogout";
 
 const baseUrl = process.env.NEXT_PUBLIC_API
 
@@ -29,7 +29,7 @@ axiosApi.interceptors.request.use(
         console.log(error)
         localStorage.removeItem('userData')
         localStorage.removeItem('accessToken')
-        window.location.href = '/login';
+        logoutAuth()
       }
     }
       
@@ -48,7 +48,7 @@ axiosApi.interceptors.response.use(
             console.log(error)
             localStorage.removeItem('userData')
             localStorage.removeItem('accessToken')
-            window.location.href = '/login';
+            logoutAuth()
           }
         }
     

@@ -17,9 +17,10 @@ import CardHeader from '@mui/material/CardHeader'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
-import { DataGrid, esES} from '@mui/x-data-grid'
+import { DataGrid , esES } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
+
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -42,13 +43,11 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/persons-type/TableHeader'
-import AddUserDrawer from 'src/views/apps/persons-type/AddUserDrawer'
-import SidebarEditPeople from 'src/views/apps/persons-type/EditPersonDrawer'
-import { getAllTyperPersons, deletePersonType } from 'src/api/RequestApi'
+import TableHeader from 'src/views/apps/providers/TableHeader'
+import AddUserDrawer from 'src/views/apps/providers/AddUserDrawer'
+import EditPeople from 'src/views/apps/providers/EditPeople'
+import { getAllPeople, getAllTyperPersons, deletePerson } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
-
-
 
 
 const PersonsType = ({ apiData }) => {
@@ -58,14 +57,17 @@ const PersonsType = ({ apiData }) => {
   const [value, setValue] = useState('')
   const [status, setStatus] = useState('')
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [editUserOpen, setEditUserOpen] = useState(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
-  const [typePersons, setTypePersons] = useState([])
+  const [people, setPeople] = useState([])
   const [loading, setLoading] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
-  const [nombre,setNombre] = useState('')
+  const [typePersons, setTypePersons] = useState([])
+  const [editUserOpen, setEditUserOpen] = useState(false)
   const [currentPerson, setCurrentPerson] = useState({})
   const [id,setId] = useState(null)
+  const [openModal, setOpenModal] = useState(false)
+  const [nombre,setNombre] = useState('')
+
+
 
 
 
@@ -77,8 +79,6 @@ const PersonsType = ({ apiData }) => {
     const [anchorEl, setAnchorEl] = useState(null)
     const rowOptionsOpen = Boolean(anchorEl)
   
-  
-  
     const handleRowOptionsClick = event => {
       setAnchorEl(event.currentTarget)
     }
@@ -87,33 +87,19 @@ const PersonsType = ({ apiData }) => {
       setAnchorEl(null)
     }
   
+
+    
     const handleEdit = () => {
       setCurrentPerson(data)
       setEditUserOpen(!editUserOpen)
       handleRowOptionsClose()
     }
 
-
   
-    // const getTyperPersons =  async() =>{
-    //   try {
-    //       const response = await getAllTyperPersons()
-    //       if(response.status === 200){
-    //         console.log(response.data)
-    //         setTypePersons(response.data)
-  
-    //       }
-          
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
-    
-    
   
     return (
       <>
-       <IconButton size='small' onClick={handleRowOptionsClick}>
+        <IconButton size='small' onClick={handleRowOptionsClick}>
           <Icon icon='tabler:dots-vertical' />
         </IconButton>
         <Menu
@@ -139,24 +125,21 @@ const PersonsType = ({ apiData }) => {
           >
             <Icon icon='tabler:eye' fontSize={20} />
             View
-          </MenuItem>
           */}
-          <MenuItem onClick={handleEdit} sx={{ '& svg': { mr: 2 } }}>
+           <MenuItem onClick={handleEdit} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:edit' fontSize={20} />
             Editar
-          </MenuItem> 
+          </MenuItem>
           <MenuItem onClick={()=>{
-            const nombre = data?.nombre
-            setNombre(nombre)
-            setId(data.id)
-            setOpenModal(true)
-            }}
-             sx={{ '& svg': { mr: 2 } }}>
+              const nombre = data?.nombre
+              setNombre(nombre)
+              setId(data.id)
+              setOpenModal(true)
+          }} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:trash' fontSize={20} />
             Eliminar
           </MenuItem>
         </Menu>
-       
       </>
     )
   }
@@ -164,7 +147,9 @@ const PersonsType = ({ apiData }) => {
   const columns = [
     {
       flex: 0.25,
-      minWidth: 280,
+      width: 400,
+      minWidth: 400,
+      maxWidth: 450,
       field: 'nombre',
       headerName: 'Nombre',
       renderCell: ({ row }) => {
@@ -242,10 +227,10 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 280,
-      field: 'esPersonaMoral',
-      headerName: 'Persona moral',
+      field: 'correo',
+      headerName: 'Correo',
       renderCell: ({ row }) => {
-        const { esPersonaMoral } = row
+        const { email } = row
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -259,7 +244,34 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {esPersonaMoral === true ? 'Sí' : 'No'}
+                {email}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 280,
+      field: 'telefono',
+      headerName: 'telefono',
+      renderCell: ({ row }) => {
+        const { telefono } = row
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {telefono}
               </Typography>
             </Box>
           </Box>
@@ -276,6 +288,8 @@ const PersonsType = ({ apiData }) => {
       renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
     }
   ]
+  
+
 
 
   // ** Hooks
@@ -297,13 +311,14 @@ const PersonsType = ({ apiData }) => {
   }, [])
 
 
-  const getTyperPersons =  async() =>{
+  const getPeople =  async() =>{
     try {
       setLoading(true)
-        const response = await getAllTyperPersons()
+        const response = await getAllPeople()
         if(response.status === 200){
+          const proveedores = response.data.filter(e=>e.tipoPersona.nombre ==='PROVEEDOR')
           console.log(response.data)
-          setTypePersons(response.data)
+          setPeople(proveedores)
           setLoading(false)
 
         }
@@ -312,42 +327,57 @@ const PersonsType = ({ apiData }) => {
       console.log(error)
     }
   }
-  
+
+  const getTyperPersons =  async() =>{
+    try {
+      setLoading(true)
+        const response = await getAllTyperPersons()
+
+        if(response.status === 200){          
+          setTypePersons(response.data)
+          setLoading(false)
+        }
+        
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleDelete = async() => {
   
     setOpenModal(false)
-    console.log(id)
-
     try {
       let data = {id}
       
-      const response = await deletePersonType(data, 1)
+      const response = await deletePerson(data, 1)
 
       if(response.status == 200){
-       await getTyperPersons()
-        toast.success('Tipo de usuario eliminado con éxito!')
+       await getPeople()
+        toast.success('Persona eliminada con éxito')
 
       }
       
     } catch (error) {
-      console.log("🚀 ~ file: index.js:100 ~ handleDelete ~ error:", error)
+      console.log(error)
     }
 
   }
 
   useEffect(() => {
+    getPeople()
     getTyperPersons()
   },[]);
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setEditUserOpen(!editUserOpen)
-
-  const sucessSubmit = () =>{
-    getTyperPersons()
-  }
+  
 
   const closeModal = () =>{
-      setOpenModal(false)
+    setOpenModal(false)
+}
+
+  const sucessSubmit = () =>{
+    getPeople()
   }
 
   return (
@@ -437,11 +467,11 @@ const PersonsType = ({ apiData }) => {
           <DataGrid
             autoHeight
             rowHeight={62}
-            rows={typePersons}
+            rows={people}
             columns={columns}
-            localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             disableRowSelectionOnClick
             loading={loading}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             pageSizeOptions={[10, 25, 50]}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
@@ -449,11 +479,11 @@ const PersonsType = ({ apiData }) => {
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} sucess={sucessSubmit} toggle={toggleAddUserDrawer} />
-      <SidebarEditPeople open={editUserOpen} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
+      <AddUserDrawer open={addUserOpen} typePersons={typePersons} sucess={sucessSubmit} toggle={toggleAddUserDrawer} />
+      <EditPeople open={editUserOpen}  typePersons={typePersons} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
       { openModal &&
-       <DialogAlert open={openModal} title={'Desea eliminar el tipo de persona ' + nombre} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
-        }
+       <DialogAlert open={openModal} title={'Desea eliminar al proveedor ' + nombre} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+      }
     </Grid>
   )
 }

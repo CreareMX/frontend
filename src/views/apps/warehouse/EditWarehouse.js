@@ -102,8 +102,11 @@ const SidebarEditPeople = props => {
 
 
   useEffect(()=>{
-    setDataEdit(editPerson)
-    reset(editPerson)
+    reset({codigo:editPerson.codigo,
+    descripcion: editPerson.descripcion,
+    id: editPerson.id,
+    idTipoAlmacen: editPerson.idTipoAlmacen,
+    nombre: editPerson.nombre})
     },[reset, editPerson])
 
   const onSubmit = async(data) => {
@@ -121,27 +124,6 @@ const SidebarEditPeople = props => {
     } catch (error) {
       toast.error(error?.response?.data)
     }
-    
-
-
-    // if (store.allData.some(u => u.email === data.email || u.username === data.username)) {
-    //   store.allData.forEach(u => {
-    //     if (u.email === data.email) {
-    //       setError('email', {
-    //         message: 'Email already exists!'
-    //       })
-    //     }
-    //     if (u.username === data.username) {
-    //       setError('username', {
-    //         message: 'Username already exists!'
-    //       })
-    //     }
-    //   })
-    // } else {
-    //   dispatch(addUser({ ...data, role, currentPlan: plan }))
-    //   toggle()
-    //   reset()
-    // }
   }
 
   const handleClose = () => {

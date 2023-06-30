@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import { EditBranchOffice } from 'src/api/RequestApi'
+import { EditPeople } from 'src/api/RequestApi'
 
 // ** Third Party Components
 import toast from 'react-hot-toast'
@@ -55,7 +55,7 @@ const Header = styled(Box)(({ theme }) => ({
 
 const SidebarEditPeople = props => {
   // ** Props
-  const { open, toggle, sucess, editPerson } = props
+  const { open, toggle, sucess, editPerson, typePersons } = props
   const [dataEdit, setDataEdit]  = useState({});
 
 
@@ -67,18 +67,18 @@ const SidebarEditPeople = props => {
   const store = useSelector(state => state.user)
 
   const schema = yup.object().shape({
-  nombre: yup
+    nombre: yup
     .string()
     .min(3, obj => showErrors('El nombre', obj.value.length, obj.min))
     .required(),
-    domicilio: yup
+    email: yup
     .string()
-    .min(3, obj => showErrors('El domicilio', obj.value.length, obj.min))
+    .min(3, obj => showErrors('El correo', obj.value.length, obj.min))
     .required(),
-  telefono: yup
+    telefono: yup
     .string()
-    .min(3, obj => showErrors('El teléfono', obj.value.length, obj.min))
-    .required(),
+    .min(3, obj => showErrors('El telefono', obj.value.length, obj.min))
+    .required()
 })
 
 
@@ -102,12 +102,15 @@ const SidebarEditPeople = props => {
 
   const onSubmit = async(data) => {
     try {
-      data.esPersonaMoral = esPersonaMoral
       const {id} = JSON.parse(localStorage.getItem('userData'))
-      const response = await EditBranchOffice(data, 1)
+
+      const idTipoPersona = 4
+      data.idTipoPersona = idTipoPersona
+      
+      const response = await EditPeople(data, 1)
 
       if(response.status == 200){
-        toast.success('Tipo de usuario modificado con éxito!')
+        toast.success('Proveedor modificada con éxito!')
         toggle()
         reset()
         sucess()
@@ -155,7 +158,7 @@ const SidebarEditPeople = props => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <Header>
-        <Typography variant='h6'>Editar Sucursal</Typography>
+        <Typography variant='h6'>Editar tipo de usuario</Typography>
         <IconButton
           size='small'
           onClick={handleClose}
@@ -175,7 +178,7 @@ const SidebarEditPeople = props => {
                 <TextField
                   value={value || ''}
                   label='Nombre'
-                  placeholder='Proveedor'
+                  placeholder=''
                   onChange={onChange}
                   error={Boolean(errors.nombre)}
                 />
@@ -185,20 +188,34 @@ const SidebarEditPeople = props => {
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
-              name='domicilio'
+              name='email'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value || ''}
-                  label='Domicilio'
-                  placeholder='Proveedor'
+                  label='Correo'
                   onChange={onChange}
-                  error={Boolean(errors.domicilio)}
+                  error={Boolean(errors.email)}
                 />
               )}
             />
-            {errors.domicilio && <FormHelperText sx={{ color: 'error.main' }}>{errors.domicilio.message}</FormHelperText>}
+            {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='sitioWeb'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value || ''}
+                  label='Sitio web'
+                  onChange={onChange}
+                  error={Boolean(errors.sitioWeb)}
+                />
+              )}
+            />
+            {errors.sitioWeb && <FormHelperText sx={{ color: 'error.main' }}>{errors.sitioWeb.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
@@ -208,8 +225,7 @@ const SidebarEditPeople = props => {
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value || ''}
-                  label='Teléfono'
-                  placeholder='Proveedor'
+                  label='Telefono'
                   onChange={onChange}
                   error={Boolean(errors.telefono)}
                 />
@@ -217,7 +233,39 @@ const SidebarEditPeople = props => {
             />
             {errors.telefono && <FormHelperText sx={{ color: 'error.main' }}>{errors.telefono.message}</FormHelperText>}
           </FormControl>
+          {/* <FormControl fullWidth sx={{ mb: 4 }}>
+          <Controller
+              name='idTipoPersona'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <>
+                <InputLabel id='role-select'>Tipo de persona</InputLabel>
+                <Select
+                fullWidth
+                id='select-role'
+                value={value || ''}
+                onChange={onChange}
+                label='Tipo de persona'
+                labelId='type-person'
+                error={Boolean(errors.idTipoPersona)}
+                inputProps={{ placeholder: 'Tipo de persona' }}
+              >
+                {
+                  typePersons.map((e) => {
+                    return (
+                      <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>
+                    )
+                 })
+                }
+              </Select>
+                </>
+              )}
+            />
+            {errors.idTipoPersona && <FormHelperText sx={{ color: 'error.main' }}>{errors.idTipoPersona.message}</FormHelperText>}
+          </FormControl> */}
         
+         
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button type='submit' variant='contained' sx={{ mr: 3 }}>
             Editar

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import { EditBranchOffice } from 'src/api/RequestApi'
+import { postPeople } from 'src/api/RequestApi'
 
 // ** Third Party Components
 import toast from 'react-hot-toast'
@@ -38,7 +38,7 @@ const showErrors = (field, valueLen, min) => {
   if (valueLen === 0) {
     return `${field} es requerido`
   } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
+    return `${field} debe ser mayor a ${min} caracteres`
   } else {
     return ''
   }
@@ -51,36 +51,40 @@ const Header = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between'
 }))
 
-
-
-const SidebarEditPeople = props => {
-  // ** Props
-  const { open, toggle, sucess, editPerson } = props
-  const [dataEdit, setDataEdit]  = useState({});
-
-
-  // ** State
-  const [esPersonaMoral, setEsPersonaMoral] = useState(false)
-
-  // ** Hooks
-  const dispatch = useDispatch()
-  const store = useSelector(state => state.user)
-
-  const schema = yup.object().shape({
+const schema = yup.object().shape({
   nombre: yup
     .string()
     .min(3, obj => showErrors('El nombre', obj.value.length, obj.min))
     .required(),
-    domicilio: yup
+    email: yup
     .string()
-    .min(3, obj => showErrors('El domicilio', obj.value.length, obj.min))
+    .min(3, obj => showErrors('El correo', obj.value.length, obj.min))
     .required(),
-  telefono: yup
+    telefono: yup
     .string()
-    .min(3, obj => showErrors('El teléfono', obj.value.length, obj.min))
-    .required(),
+    .min(3, obj => showErrors('El telefono', obj.value.length, obj.min))
+    .required()
 })
 
+
+const defaultValues = {
+  nombre: '',
+  email: '',
+  telefono: '',
+  sitioWeb: '',
+}
+
+const SidebarAddUser = props => {
+  // ** Props
+  const { open, toggle, sucess, typePersons } = props
+
+  // ** State
+  const [idTipoPersona, setIdTipoPersona] = useState('')
+
+
+  // ** Hooks
+  const dispatch = useDispatch()
+  const store = useSelector(state => state.user)
 
   const {
     reset,
@@ -90,30 +94,29 @@ const SidebarEditPeople = props => {
     handleSubmit,
     formState: { errors }
   } = useForm({
+    defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
 
-
-  useEffect(()=>{
-    setDataEdit(editPerson)
-    reset(editPerson)
-    },[reset, editPerson])
-
   const onSubmit = async(data) => {
     try {
-      data.esPersonaMoral = esPersonaMoral
-      const {id} = JSON.parse(localStorage.getItem('userData'))
-      const response = await EditBranchOffice(data, 1)
+
+      const idTipoPersona = 4
+      data.idTipoPersona = idTipoPersona
+
+      const response = await postPeople(data, 1)
 
       if(response.status == 200){
-        toast.success('Tipo de usuario modificado con éxito!')
+        toast.success('proveedor creada con éxito!')
         toggle()
         reset()
         sucess()
       }
       
     } catch (error) {
+      toggle()
+      reset()
       toast.error(error?.response?.data)
     }
     
@@ -140,7 +143,6 @@ const SidebarEditPeople = props => {
   }
 
   const handleClose = () => {
-    setEsPersonaMoral(false)
     toggle()
     reset()
   }
@@ -155,7 +157,7 @@ const SidebarEditPeople = props => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <Header>
-        <Typography variant='h6'>Editar Sucursal</Typography>
+        <Typography variant='h6'>Agregar un proveedor</Typography>
         <IconButton
           size='small'
           onClick={handleClose}
@@ -173,7 +175,7 @@ const SidebarEditPeople = props => {
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                  value={value || ''}
+                  value={value}
                   label='Nombre'
                   placeholder='Proveedor'
                   onChange={onChange}
@@ -185,20 +187,34 @@ const SidebarEditPeople = props => {
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
-              name='domicilio'
+              name='email'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                  value={value || ''}
-                  label='Domicilio'
-                  placeholder='Proveedor'
+                  value={value}
+                  label='Correo'
                   onChange={onChange}
-                  error={Boolean(errors.domicilio)}
+                  error={Boolean(errors.email)}
                 />
               )}
             />
-            {errors.domicilio && <FormHelperText sx={{ color: 'error.main' }}>{errors.domicilio.message}</FormHelperText>}
+            {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='sitioWeb'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value}
+                  label='Sitio web'
+                  onChange={onChange}
+                  error={Boolean(errors.sitioWeb)}
+                />
+              )}
+            />
+            {errors.sitioWeb && <FormHelperText sx={{ color: 'error.main' }}>{errors.sitioWeb.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
@@ -207,9 +223,8 @@ const SidebarEditPeople = props => {
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                  value={value || ''}
-                  label='Teléfono'
-                  placeholder='Proveedor'
+                  value={value}
+                  label='Telefono'
                   onChange={onChange}
                   error={Boolean(errors.telefono)}
                 />
@@ -217,10 +232,40 @@ const SidebarEditPeople = props => {
             />
             {errors.telefono && <FormHelperText sx={{ color: 'error.main' }}>{errors.telefono.message}</FormHelperText>}
           </FormControl>
-        
+          {/* <FormControl fullWidth sx={{ mb: 4 }}>
+          <Controller
+              name='idTipoPersona'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <>
+                <InputLabel id='role-select'>Tipo de persona</InputLabel>
+                <Select
+                fullWidth
+                id='select-role'
+                value={value}
+                onChange={onChange}
+                label='Tipo de persona'
+                labelId='type-person'
+                error={Boolean(errors.idTipoPersona)}
+                inputProps={{ placeholder: 'Tipo de persona' }}
+              >
+                {
+                  typePersons.map((e) => {
+                    return (
+                      <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>
+                    )
+                 })
+                }
+              </Select>
+                </>
+              )}
+            />
+            {errors.idTipoPersona && <FormHelperText sx={{ color: 'error.main' }}>{errors.idTipoPersona.message}</FormHelperText>}
+          </FormControl> */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button type='submit' variant='contained' sx={{ mr: 3 }}>
-            Editar
+              Guardar
             </Button>
             <Button variant='outlined' color='secondary' onClick={handleClose}>
               Cancelar
@@ -232,4 +277,4 @@ const SidebarEditPeople = props => {
   )
 }
 
-export default SidebarEditPeople
+export default SidebarAddUser

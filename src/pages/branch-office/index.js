@@ -17,7 +17,7 @@ import CardHeader from '@mui/material/CardHeader'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, esES } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
 
@@ -464,6 +464,7 @@ const PersonsType = ({ apiData }) => {
             rowHeight={62}
             rows={typePersons}
             columns={columns}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             disableRowSelectionOnClick
             loading={loading}
             pageSizeOptions={[10, 25, 50]}

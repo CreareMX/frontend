@@ -153,7 +153,7 @@ const SidebarAddUser = props => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <Header>
-        <Typography variant='h6'>Agregar tipo de usuario</Typography>
+        <Typography variant='h6'>Agregar Sucursal</Typography>
         <IconButton
           size='small'
           onClick={handleClose}

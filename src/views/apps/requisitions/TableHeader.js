@@ -41,7 +41,7 @@ const TableHeader = props => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                Sucursales
+              Nueva requisición
               </Typography>
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
         <TextField
@@ -52,9 +52,9 @@ const TableHeader = props => {
           onChange={e => handleFilter(e.target.value)}
         />
 
-        <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
+        <Button onClick={()=>router.push('/requisitions/add')} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
-          Nueva Sucursal
+          Nueva requisición
         </Button>
       </Box>
     </Box>

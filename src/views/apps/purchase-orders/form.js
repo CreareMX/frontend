@@ -60,7 +60,7 @@ import axios from 'axios'
 import TableHeader from 'src/views/apps/branch-office/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getAllProductsbyIdProvider } from 'src/api/RequestApi'
+import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getAllProductsbyIdProvider, changeStatusReqById } from 'src/api/RequestApi'
 import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -429,7 +429,7 @@ const FormLayoutsSeparator = () => {
       idAlmacen: warehouseSelected.id,
       idSucursal: branchOfficeSelected.id,
       comentarios: comments,
-      idEstado:2
+      idEstado:5
     }
 
 
@@ -439,6 +439,8 @@ const FormLayoutsSeparator = () => {
       if(response.status === 200){
 
         let idReq = response.data.id
+
+
         productList.forEach(async(element) => {
 
           let dataDetail = {
@@ -450,9 +452,12 @@ const FormLayoutsSeparator = () => {
           const response = await postRequesitionsDetail(dataDetail, 1)
           
         });
+
+        const response2 = await changeStatusReqById(idReq,5,1)
+
       
-        toast.success('Requisición agregada con éxito')
-        router.push('/requisitions')
+        toast.success('Orden de compra agregada con éxito')
+        router.push('/purchase-orders')
       }
       
       
@@ -523,7 +528,7 @@ const FormLayoutsSeparator = () => {
   return (
     <>
     <Card>
-      <CardHeader title='Agregar Requsision' />
+      <CardHeader title='Agregar Orden de compra' />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>

@@ -3,28 +3,72 @@ const navigation = () => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
+      path: '/dashboards/crm',
+
       
       // badgeContent: 'new',
       badgeColor: 'error',
+    },
+    {
+      title: 'Compras',
+      icon: 'ph:bag',
       children: [
-        // {
-        //   title: 'Analytics',
-        //   path: '/dashboards/analytics'
-        // },
         {
-          title: 'CRM',
-          path: '/dashboards/crm'
-        }
+          title: 'Requisiciones',
+          path: '/requisitions'
+        },
+        {
+          title: 'Ordenes de compra',
+          path: '/purchase-orders'
+        },
+        {
+          title: 'Proveedores',
+          path: '/providers'
+        },
 
         // {
-        //   title: 'eCommerce',
-        //   path: '/dashboards/ecommerce'
+        //   title: 'Proveedores',
+        //   path: '/requisitions'
+        // },
+
+        // {
+        //   title: 'View',
+        //   children: [
+        //     {
+        //       title: 'Account',
+        //       path: '/apps/user/view/account'
+        //     },
+        //     {
+        //       title: 'Security',
+        //       path: '/apps/user/view/security'
+        //     },
+        //     {
+        //       title: 'Billing & Plans',
+        //       path: '/apps/user/view/billing-plan'
+        //     },
+        //     {
+        //       title: 'Notifications',
+        //       path: '/apps/user/view/notification'
+        //     },
+        //     {
+        //       title: 'Connection',
+        //       path: '/apps/user/view/connection'
+        //     }
+        //   ]
         // }
       ]
     },
     {
-      sectionTitle: 'Módulos'
+      title: 'Almacén',
+      icon: 'ph:package-light',
+      children: [
+        {
+          title: 'OC por recibir',
+          path: '/orders-to-receive'
+        },
+      ]
     },
+
     
     // {
     //   title: 'Email',
@@ -63,42 +107,45 @@ const navigation = () => {
     //     }
     //   ]
     // },
-    {
-      title: 'Usuarios',
-      icon: 'tabler:user',
-      children: [
-        {
-          title: 'Lista',
-          path: '/apps/user/list'
-        },
 
+       {
+      title: 'Admon del sistema',
+      icon: 'material-symbols:settings-outline',
+      children: [
         // {
-        //   title: 'View',
+        //   title: 'Usuarios',
+        //   path: '/apps/user/list'
+        // },
+        // {
+        //   title: 'Equipo de trabajo',
         //   children: [
         //     {
-        //       title: 'Account',
-        //       path: '/apps/user/view/account'
+        //       title: 'Personas',
+        //       path: '/people'
         //     },
         //     {
-        //       title: 'Security',
-        //       path: '/apps/user/view/security'
+        //       title: 'Tipo de personas',
+        //       path: '/persons-type'
         //     },
-        //     {
-        //       title: 'Billing & Plans',
-        //       path: '/apps/user/view/billing-plan'
-        //     },
-        //     {
-        //       title: 'Notifications',
-        //       path: '/apps/user/view/notification'
-        //     },
-        //     {
-        //       title: 'Connection',
-        //       path: '/apps/user/view/connection'
-        //     }
+    
+          
         //   ]
-        // }
+        // },
+        {
+          title: 'Sucursales',
+          path: '/branch-office',
+        },
+        {
+          title: 'Almacenes',
+          path: '/warehouse',
+        },
+        {
+          title: 'Tipo de almacenes',
+          path: '/warehouse-type',
+        },
       ]
     },
+   
 
     // {
     //   title: 'Roles & Permissions',

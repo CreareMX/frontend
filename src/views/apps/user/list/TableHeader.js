@@ -20,13 +20,13 @@ const TableHeader = props => {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'flex-end'
       }}
     >
       {/* <Button color='secondary' variant='outlined' startIcon={<Icon icon='tabler:upload' />}>
         Export
       </Button> */}
-      <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+      <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
         <TextField
           size='small'
           value={value}
@@ -35,10 +35,10 @@ const TableHeader = props => {
           onChange={e => handleFilter(e.target.value)}
         />
 
-        {/* <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
+        <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
           Agregar nuevo usuario
-        </Button> */}
+        </Button>
       </Box>
     </Box>
   )

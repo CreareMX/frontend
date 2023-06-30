@@ -16,7 +16,8 @@ const FormLayouts = () => {
       <Grid container spacing={6}>
        
         <Grid item xs={12}>
-          <FormRequisition />
+          <h1>Hola</h1>
+          {/* <FormRequisition /> */}
         </Grid>
        
       </Grid>

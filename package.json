@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-on-netlify",
     "start": "next start",
     "export": "next build && next export -o _static",
     "lint": "eslint --fix \"src/**/*.{js,jsx}\"",

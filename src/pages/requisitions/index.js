@@ -95,8 +95,7 @@ const PersonsType = ({ apiData }) => {
    
   
     const handleEdit = (id) => {
-      router.push(`requisitions/${id}`, undefined, {shallow:true})
-
+      router.push('requisitions/[id]', `requisitions/${id}`);
     }
 
     const validarReq = async(id) =>{

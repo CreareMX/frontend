@@ -193,7 +193,7 @@ const PersonsType = ({ apiData }) => {
   const columns = [
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 120,
       field: 'fecha',
       headerName: 'Fecha',
       renderCell: ({ row }) => {
@@ -219,7 +219,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 400,
       field: 'proveedor',
       headerName: 'Proveedor',
       renderCell: ({ row }) => {
@@ -296,7 +296,7 @@ const PersonsType = ({ apiData }) => {
     // },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 350,
       field: 'comentarios',
       headerName: 'Comentarios',
       renderCell: ({ row }) => {
@@ -322,7 +322,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 150,
       field: 'alamcen',
       headerName: 'Almacen',
       renderCell: ({ row }) => {
@@ -348,7 +348,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 150,
       field: 'sucursal',
       headerName: 'Sucursal',
       renderCell: ({ row }) => {
@@ -374,7 +374,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 150,
       field: 'estado',
       headerName: 'Estado',
       renderCell: ({ row }) => {
@@ -434,7 +434,7 @@ const PersonsType = ({ apiData }) => {
         const response = await getAllRequesitions()
         if(response.status === 200){
           console.log(response.data)
-          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'OC_PENDIENTE' || e.estado.nombre === 'OC_CANCELADA')
+          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'OC_PENDIENTE')
           purchaseOrders.reverse()
           setTypePersons(purchaseOrders)
           setLoading(false)

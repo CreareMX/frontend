@@ -184,8 +184,7 @@ const PersonsType = ({ apiData }) => {
          Cancelar
        </MenuItem>
           }
-          
-    
+        {data.estado.nombre === 'REQ_PENDIENTE' &&
           <MenuItem onClick={()=>{
             validarReq(data.id)
             }}
@@ -193,6 +192,7 @@ const PersonsType = ({ apiData }) => {
             <Icon icon='ic:outline-check' fontSize={20} />
             Validar
           </MenuItem>
+          }
         </Menu>
       </>
     )
@@ -201,7 +201,7 @@ const PersonsType = ({ apiData }) => {
   const columns = [
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 120,
       field: 'fecha',
       headerName: 'Fecha',
       renderCell: ({ fecha , row }) => {
@@ -227,7 +227,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 400,
       field: 'nombre',
       headerName: 'Proveedor',
       valueGetter: params => params.row.cliente.nombre,
@@ -305,7 +305,7 @@ const PersonsType = ({ apiData }) => {
     // },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 350,
       field: 'comentarios',
       headerName: 'Comentarios',
       renderCell: ({ row }) => {
@@ -331,7 +331,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 150,
       field: 'alamcen',
       headerName: 'Almacen',
       renderCell: ({ row }) => {
@@ -357,7 +357,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 150,
       field: 'sucursal',
       headerName: 'Sucursal',
       renderCell: ({ row }) => {
@@ -383,7 +383,7 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
+      minWidth: 200,
       field: 'estado',
       headerName: 'Estado',
       renderCell: ({ row }) => {
@@ -453,7 +453,7 @@ const PersonsType = ({ apiData }) => {
       setLoading(true)
         const response = await getAllRequesitions()
         if(response.status === 200){
-          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'REQ_PENDIENTE' || e.estado.nombre === 'REQ_CANCELADA'|| e.estado.nombre === 'OC_RECHAZADA'  )
+          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'REQ_PENDIENTE' || e.estado.nombre === 'OC_RECHAZADA'  )
           purchaseOrders.reverse()
           setTypePersons(purchaseOrders)
           setLoading(false)

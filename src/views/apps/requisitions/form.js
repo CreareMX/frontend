@@ -629,6 +629,9 @@ const FormLayoutsSeparator = () => {
         </CardContent>
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
+          <Button onClick={()=> router.push('/requisitions')} size='large' variant='outlined'>
+            Cancelar
+          </Button>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
             Guardar
           </Button>

@@ -205,6 +205,7 @@ const FormLayoutsSeparator = () => {
   }
 
   const getRequisition = async() =>{
+    if(id){
     try {
         setLoading(true)
           const response = await getRequesitionById(id)
@@ -218,8 +219,8 @@ const FormLayoutsSeparator = () => {
           
       } catch (error) {
         console.log(error)
-      }    
-    
+      }   
+    } 
 }
 
 
@@ -231,7 +232,6 @@ const FormLayoutsSeparator = () => {
     getRequisition()
     getbranchOffices()    
     getAllOrderDetail()
-    getProductsbyProvider()
   },[router.query.id])
 
   const RowOptions = ({ id, data }) => {
@@ -440,6 +440,8 @@ const FormLayoutsSeparator = () => {
   }
 
   const getAllOrderDetail = async() =>{
+    if(id){
+
 
     try {
       const response = await getOrderDetail(id)
@@ -475,6 +477,7 @@ const FormLayoutsSeparator = () => {
     } catch (error) {
       console.log(error)
     }
+  }
 
   }
 

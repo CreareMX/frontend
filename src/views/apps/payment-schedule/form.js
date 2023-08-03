@@ -30,38 +30,21 @@ import Icon from 'src/@core/components/icon'
 
 
 // ** Next Imports
-import Link from 'next/link'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
-import { DataGrid,esES } from '@mui/x-data-grid'
+import { DataGrid, esES } from '@mui/x-data-grid'
+
 import DialogAlert from 'src/views/components/dialogs/DialogAlert'
 
 // ** Icon Imports
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-import CardStatsHorizontalWithDetails from 'src/@core/components/card-statistics/card-stats-horizontal-with-details'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 
-// ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
-
-// ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/user'
-
-// ** Third Party Components
-import axios from 'axios'
-
-// ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/branch-office/TableHeader'
-import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
-import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getRequesitionById, updateRequesitions, getOrderDetail } from 'src/api/RequestApi'
+import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getAllProductsbyIdProvider, changeStatusReqById } from 'src/api/RequestApi'
 import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -80,22 +63,20 @@ const FormLayoutsSeparator = () => {
   const router = useRouter()
 
   // ** States
-  const { id } = router.query
   const [date, setDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
+  const [startDate, setStartDate] = useState(null)
   const [language, setLanguage] = useState([])
   const [productList, setProductList] = useState([])
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
   const [providers, setProviders] = useState([])
   const [loading, setLoading] = useState(false)
   const [warehouse, setWarehouse] = useState([])
-  const [branchOffice, setBranhOffice] = useState([])
-  const [products,setProducts] = useState([])
-  const [providerSelected, setProviderSelectd] = useState(null)
-  const [warehouseSelected, setWarehouseSelected] = useState(null)
-  const [branchOfficeSelected,setBranchOfficeSelected] = useState(null)
-  const [productSelected, setProductSelected] = useState('')
+  const [providerId, setProviderId] = useState('')
   const [count,setCount] = useState('')
   const [comments, setComments] = useState('')
+  const [conceptoSelected, setConceptoSelected] = useState(null)
+  const [monto, setmonto] = useState(null)
 
   const [values, setValues] = useState({
     password: '',
@@ -103,6 +84,21 @@ const FormLayoutsSeparator = () => {
     showPassword: false,
     showPassword2: false
   })
+
+  const conceptos = [
+    {
+      id:1,
+      nombre:'Telefono'
+    },
+    {
+      id:2,
+      nombre:'Agua'
+    },
+    {
+      id:3,
+      nombre:'Luz'
+    }
+  ]
 
   const getPeople =  async() =>{
     try {
@@ -123,79 +119,18 @@ const FormLayoutsSeparator = () => {
     }
   }
 
+  const handleOnChange = dates => {
+   console.log(dates)
+   setStartDate(dates)
+  }
+
   const getWarehouse =  async() =>{
-    // try {
-    //   setLoading(true)
-    //     const response = await getAllWarehouse()
-    //     if(response.status === 200){
-    //       setWarehouse(response.data)
-    //       setLoading(false)
-
-    //     }
-        
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    const almacen = [
-        {
-            "id": 5,
-            "descripcion": "Almacem principal",
-            "nombre": "Mérida",
-            "codigo": "C12432",
-            "idTipoAlmacen": 1,
-        },
-        {
-            "id": 4,
-            "descripcion": "Almacen secundario",
-            "nombre": "Valladolid",
-            "codigo": "C43423",
-            "idTipoAlmacen": 3,
-        }
-    ]
-        setWarehouse(almacen)
-
-  }
-
-  const getbranchOffices =  async() =>{
-    // try {
-    //   setLoading(true)
-    //     const response = await getAllBranchOffice()
-    //     if(response.status === 200){
-    //       setBranhOffice(response.data)
-    //       setLoading(false)
-
-    //     }
-        
-    // } catch (error) {
-    //   console.log(error)
-    // }
-
-    const sucursales = [
-        {
-            "nombre": "Mérida",
-            "id": 1,
-            "domicilio": "C57 # 343 x70 y 72 Centro",
-            "telefono": "9994335363"
-        },
-        {
-            "nombre": "Valladolid",
-            "id": 2,
-            "domicilio": "C5h #435 x 20 y 24 Centro",
-            "telefono": "9236245356"
-        }
-    ]
-
-    setBranhOffice(sucursales)
-  }
-
-  const getProductsbyProvider =  async() =>{
     try {
       setLoading(true)
-        const response = await getAllProducts()
+        const response = await getAllWarehouse()
         if(response.status === 200){
-          setProducts(response.data)
+          setWarehouse(response.data)
           setLoading(false)
-          
 
         }
         
@@ -204,44 +139,63 @@ const FormLayoutsSeparator = () => {
     }
   }
 
-  const getRequisition = async() =>{
-    if(id){
+  const getbranchOffices =  async() =>{
 
+  }
+
+  const getProductsbyProvider =  async(id) =>{
     try {
-        setLoading(true)
-          const response = await getRequesitionById(id)
-          if(response.status === 200){
-            setLoading(false)
-            setProviderSelectd(response.data.cliente)
-            setBranchOfficeSelected(response.data.sucursal)
-            setWarehouseSelected(response.data.almacen)
-            setComments(response.data.comentarios)
-          }
-          
-      } catch (error) {
-        console.log(error)
-      }    
+      setLoading(true)
+        const response = await getAllProductsbyIdProvider(id)
+        if(response.status === 200){
+          console.log(response.data)
+          setLoading(false)
+
+        }
+        
+    } catch (error) {
+      console.log(error)
     }
-}
+  }
 
+  const getAllProductsProvider =  async() =>{
+    try {
+      setLoading(true)
+        const response = await getAllProducts()
+        console.log("🚀 ~ file: form.js:175 ~ getAllProductsProvider ~ response:", response)
+        if(response.status === 200){
+          console.log(response.data)
+          setLoading(false)
 
-
+        }
+        
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(()=>{
-    getPeople()
-    getWarehouse()
-    getRequisition()
-    getbranchOffices()    
-    getAllOrderDetail()
-  },[router.query.id])
+ 
+  },[])
 
   const RowOptions = ({ id, data }) => {
     // ** Hooks
     const dispatch = useDispatch()
   
     // ** State
-    const [anchorEl, setAnchorEl] = useState(null)  
-
+    const [anchorEl, setAnchorEl] = useState(null)
+    const rowOptionsOpen = Boolean(anchorEl)
+  
+  
+  
+    const handleRowOptionsClick = event => {
+      setAnchorEl(event.currentTarget)
+    }
+  
+    const handleRowOptionsClose = () => {
+      setAnchorEl(null)
+    }
+  
    
   
     const handleDelete = () => {
@@ -367,9 +321,9 @@ const FormLayoutsSeparator = () => {
     }, 
     {
       flex: 0.25,
-      width: 150,
-      minWidth: 150,
-      maxWidth: 150,
+      width: 100,
+      minWidth: 100,
+      maxWidth: 100,
       field: 'cantidad',
       headerName: 'Cantidad',
       renderCell: ({ row }) => {
@@ -397,9 +351,9 @@ const FormLayoutsSeparator = () => {
       flex: 0.25,
       width: 100,
       minWidth: 100,
-      maxWidth: 150,
+      maxWidth: 100,
       field: 'precio',
-      headerName: 'precio',
+      headerName: 'Precio',
       renderCell: ({ row }) => {
   
         return (
@@ -421,17 +375,16 @@ const FormLayoutsSeparator = () => {
         )
       }
     }, 
-
-    // {
-    //   flex: 0.1,
-    //   width: 100,
-    //   minWidth: 100,
-    //   maxWidth: 100,
-    //   sortable: false,
-    //   field: 'actions',
-    //   headerName: 'Accion',
-    //   renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
-    // }
+    {
+      flex: 0.1,
+      width: 100,
+      minWidth: 100,
+      maxWidth: 100,
+      sortable: false,
+      field: 'actions',
+      headerName: 'Accion',
+      renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
+    }
   ]
 
 
@@ -440,106 +393,55 @@ const FormLayoutsSeparator = () => {
     console.log("🚀 ~ file: form.js:279 ~ handleChangeSucursal ~ newValue:", newValue)
   }
 
-  const getAllOrderDetail = async() =>{
-
-    if(id){
-
-    try {
-      const response = await getOrderDetail(id)
-      
-      
-      if(response.status === 200){
-        
-        const product = []
-
-        response.data.map(e=>{
-          let data = {
-            id: e?.idProducto,
-            nombre: e?.producto?.nombre,
-            descripcion: e?.producto.descripcion,
-            cantidad: e?.cantidad,
-            precio:e?.producto.precios[0]?.monto,
-            proveedor:e.ordenCompra?.cliente?.nombre
-          }
-          product.push(data)
-        })
-
-        setProductList(product)
-
-           
-      }
-      
-      
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  }
-
   const onSubmit = async(data) =>{
 
-    let date = new Date().toISOString();
+    let number= Math.floor(Math.random() *200)
 
-    let dataReq = {
-      id: id,
-      idEstado:5,
-      fecha: date,
-      fechaCompromiso:date,
-      fechaEnvio:date,
-      idCliente: parseInt(providerSelected.id),
-      idEmpleadoCrea: 7,
-      idAlmacen: warehouseSelected.id,
-      idSucursal: branchOfficeSelected.id,
+    let arrayJson = []
+
+    let dataJson = {
+      id:number ,
+      concepto: conceptoSelected.nombre,
+      fecha: new Date(startDate).toLocaleDateString('es-MX'),
+      fechaPago:'Por pagar',
+      monto: parseInt(monto),
       comentarios: comments,
-      formaEnvio:'terestre'
+      tipo:'CF'
     }
+    arrayJson.push(dataJson)
 
+    let dataObj = JSON.stringify(arrayJson);
 
-    try {
-      const response = await updateRequesitions(dataReq, 1)
-      console.log("🚀 ~ file: form.js:355 ~ onSubmit ~ response:", response)
-      
-      if(response.status === 200){
-
-        // let idReq = response.data.id
-        // productList.forEach(async(element) => {
-
-        //   let dataDetail = {
-        //     idOrdenCompra: idReq,
-        //     idProducto: element.id,
-        //     cantidad: parseInt(element.cantidad),
-        //     descuento: 0
-        //   }
-        //   console.log("🚀 ~ file: form.js:369 ~ productList.forEach ~ dataDetail:", dataDetail)
-
-        //   const response = await postRequesitionsDetail(dataDetail, 1)
-
-          
-        // });
-      
-        toast.success('Requisición actualizada con éxito')
-        router.push('/purchase-orders')
-      }
-      
-      
-    } catch (error) {
-      console.log(error)
+    let listaProgramados = localStorage.getItem("pagosProgramados");
+    if(!JSON.parse(listaProgramados)){
+      localStorage.setItem('pagosProgramados',dataObj )
+    }else{
+      let addTojson = JSON.parse(listaProgramados)
+      addTojson.push(dataJson)
+      localStorage.setItem('pagosProgramados',JSON.stringify(addTojson) )
     }
-
-    console.log(dataReq)
+  
+    toast.success('Pago agregado con éxito')
+    router.push('/payment-schedule')
 
   }
 
   const addProductsToList = (data)=>{
 
+    if(data == ''){
+      toast.error('Tienes que seleccionar por lo menos un producto de la lista')
 
+      return
+    }
 
     const product = {
-      id: data?.id,
-      nombre: data?.nombre,
-      descripcion: data?.descripcion,
-      cantidad: parseInt(count)
+      id: data?.idProducto,
+      nombre: data?.producto?.nombre,
+      descripcion: data?.producto?.descripcion,
+      cantidad: parseInt(count),
+      precio:data?.producto?.precios[0]?.monto,
+      idProveedor:data?.idProveedor,
+      proveedor:data?.proveedor?.nombre
     }
 
     const found = productList.some(el => el.id === data.id);
@@ -547,6 +449,7 @@ const FormLayoutsSeparator = () => {
     if(found){
       setCount('')
       setProductSelected('')
+      setProviderId('')
       toast.error('Ya existe el producto en la lista')
 
     }else if(count ===''){
@@ -556,6 +459,7 @@ const FormLayoutsSeparator = () => {
       setProductList((old)=> [...old, product])
       setCount('')
       setProductSelected('')
+      setProviderId('')
     }
 
 
@@ -582,105 +486,55 @@ const FormLayoutsSeparator = () => {
   return (
     <>
     <Card>
-      <CardHeader title='Editar Requsision' />
+      <CardHeader title='Agregar pago' />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           <Grid container spacing={5}>
+         
+         
            
-            <Grid item xs={12} sm={12}>
-            <Autocomplete
-            required
-            value={warehouseSelected || ''}
-            onChange={(e, data) =>setWarehouseSelected(data)}
-                options={warehouse}
-                id='autocomplete-outlined'
-                getOptionLabel={option => option.nombre || ''}
-                renderInput={params => <TextField {...params} required label='Almacen' />}
-            />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-            <Autocomplete
-            required
-            value={branchOfficeSelected || ''}
-            onChange={(e, data) =>setBranchOfficeSelected(data)}
-                options={branchOffice}
-                id='autocomplete-outlined'
-                getOptionLabel={option => option.nombre || ''}
-                renderInput={params => <TextField {...params} required label='Sucursal' />}
-            />
-            </Grid>
            
             <Grid item xs={12} sm={6}>
-              <TextField value={comments || ''} fullWidth name='comentarios' onChange={(value) => setComments(value.target.value)} label='Comentarios' />
-            </Grid>
-            {/* <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                Editar Productos
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
             <Autocomplete
-            
-            value={productSelected || ''}
-                onChange={(e, data) =>setProductSelected(data)}
-                options={products || []}
-                id='autocomplete-outlined'
-                getOptionLabel={option => option?.nombre || ''}
-                renderInput={params => <TextField {...params}  label='Producto' />}
-            />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-            <Autocomplete
-            noOptionsText={'Sin resultados'}
             required
-            value={providerSelected || ''}
-            onChange={(e, data) =>{
-              setProviderSelectd(data)}}
-                options={providers}
+            onChange={(e, data) =>setConceptoSelected(data)}
+                options={conceptos}
                 id='autocomplete-outlined'
                 getOptionLabel={option => option.nombre || ''}
-                renderInput={params => <TextField {...params} required label='Proveedor' />}
+                renderInput={params => <TextField {...params} required label='Conceptos' />}
             />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth name='comentarios' value={productSelected?.descripcion || ''} label='Descripción' InputProps={{
-    readOnly: true,
-  }} />
+
+            <DatePicker
+            id='recharts-area'
+            selected={startDate}
+            onChange={handleOnChange}
+            required
+            placeholderText='Click to select a date'
+            customInput={<CustomInput required />}
+          />
+                       </Grid>
+          <Grid item xs={12} sm={6}>
+              <TextField required fullWidth name='descripcion' onChange={(e)=>setmonto(e.target.value)}  label='Monto' InputProps={{
+          }} />
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField fullWidth name='cantidad' value={count || ''} onChange={(value)=>{
-                setCount(value.target.value)
-                 console.log(value.target.value)
-                 }} label='Cantidad' />
-            </Grid>
-            <Grid item xs={12} sm={2} sx={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-            <Button onClick={()=>{addProductsToList(productSelected)}} size='medium' sx={{ mr: 2 }} variant='outlined'>
-            Agregar
-          </Button>
-            </Grid> */}
-            <Grid item xs={12} sm={12}>
-            <DataGrid
-              autoHeight
-              rowHeight={62}
-              rows={productList}
-              columns={columns}
-              localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
-              disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-            />
+
+            <Grid item xs={12} sm={6}>
+              <TextField required fullWidth name='descripcion' onChange={(e)=> setComments(e.target.value)}  label='Comentario' InputProps={{
+          }} />
             </Grid>
           </Grid>
+        
         </CardContent>
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
-        <Button onClick={()=> router.push('/purchase-orders')} size='large' variant='outlined'>
+          <Button onClick={()=> router.push('/payment-schedule')} size='large' variant='outlined'>
             Cancelar
           </Button>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
-            Actualizar
+            Guardar
           </Button>
         </CardActions>
       </form>

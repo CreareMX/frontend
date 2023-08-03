@@ -66,6 +66,52 @@ const navigation = () => {
           title: 'OC por recibir',
           path: '/orders-to-receive'
         },
+        {
+          title: 'Inventario',
+          path: '/inventary'
+        },
+
+        // {
+        //   title: 'Traspasos',
+        //   path: '/transfers'
+        // },
+        {
+          title: 'Salidas',
+          path: '/departures'
+        },
+
+        // {
+        //   title: 'Resurtidos',
+        //   path: '/restocked'
+        // },
+      ]
+    },
+    {
+      title: 'Egresos',
+      icon: 'mi:log-out',
+      children: [
+        {
+          title: 'Programación pagos',
+          path: '/payment-schedule'
+        },
+      ]
+    },
+    {
+      title: 'Ingresos',
+      icon: 'gridicons:add',
+      children: [
+        {
+          title: 'Por cobrar',
+          path: '/receivable'
+        },
+        {
+          title: 'Corte de caja',
+          path: '/cash-register'
+        },
+        {
+          title: 'Caja chica',
+          path: '/petty-cash'
+        },
       ]
     },
 

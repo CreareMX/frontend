@@ -21,7 +21,6 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select from '@mui/material/Select'
-import CardInfluencer from 'src/views/ui/cards/basic/CardInfluencer'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -79,14 +78,7 @@ const FormLayoutsSeparator = () => {
   const [clienteSelected, setClienteSelected] = useState(null)
   const [tipoPagoSelected, setTipoPagoSelected] = useState(null)
   const [monto, setmonto] = useState(null)
-  const [ef,setEf] = useState(0)
-  const [td,setTd] = useState(0)
-  const [tc,setTc] = useState(0)
-  const [tr,setTr] = useState(0)
-  const [total,SetTot] = useState(0)
-  const [cuentaSistema, setCuentaSistema] = useState([{nombre:'EF',monto:200},{nombre:'TD', monto:500},{nombre:'TC', monto:300},{nombre:'TR', monto:700},{nombre:'TOT', monto:1700}])
-  const [cuentaDif, setCuentaDif] = useState([{nombre:'EF',monto:0},{nombre:'TD', monto:0},{nombre:'TC', monto:0},{nombre:'TR', monto:0}])
- 
+
   const [values, setValues] = useState({
     password: '',
     password2: '',
@@ -94,100 +86,47 @@ const FormLayoutsSeparator = () => {
     showPassword2: false
   })
 
-  let clientes = [
+  const clientes = [
     {
       id:1,
       nombre:'Administrador'
-    },
+    }
   ]
 
-
-  const columns = [
+  const tipoPago = [
     {
-      flex: 0.25,
-      width: 300,
-      minWidth: 300,
-      maxWidth: 450,
-      field: 'nombre',
-      headerName: 'Cobrado',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-              {row.cobrado}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
+      id:1,
+      nombre:'Efectivo'
     },
     {
-      flex: 0.25,
-      width: 300,
-      minWidth: 300,
-      maxWidth: 450,
-      field: 'proveedor',
-      headerName: 'Sistema',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.sistema}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      width: 300,
-      minWidth: 300,
-      maxWidth: 450,
-      field: 'descripcion',
-      headerName: 'Diferencia',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.diferencia}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
+      id:2,
+      nombre:'Tarjeta'
     }, 
+    {
+      id:3,
+      nombre:'Trasferencia'
+    },
   ]
+
+  const productos =[
+    {
+      id:1,
+      nombreProd:'BATIDORA ARTISAN AGUAMA 4.7Lt KSM150PSAQ',
+      proveedor: 'ADRIAN AGUILERA MORENO',
+      almacen: 'Valladolid',
+      cantidadContada: 102,
+      CantidadSistem:  100
+    },
+    {
+      id:2,
+      nombreProd:'AZUCAR ESTANDAR SACO 25KG',
+      proveedor: 'ADRIAN AGUILERA MORENO',
+      almacen: 'Valladolid',
+      cantidadContada: 55,
+      CantidadSistem:  57
+    },
+  ]
+
 
   const getPeople =  async() =>{
     try {
@@ -339,30 +278,174 @@ const FormLayoutsSeparator = () => {
 
     let dataJson = {
       id:number ,
-      cliente: clientes[0].nombre,
+      usuario:'Administrador',
       fecha: new Date().toLocaleDateString('es-MX'),
-      estado:'Finalizado',
+      estado:'Ajustado',
       comentarios: comments,
     }
-    console.log("🚀 ~ file: form.js:366 ~ onSubmit ~ dataJson:", dataJson)
+    console.log("🚀 ~ file: form.js:286 ~ onSubmit ~ dataJson:", dataJson)
 
     arrayJson.push(dataJson)
 
     let dataObj = JSON.stringify(arrayJson);
 
-    let corteDeCaja = localStorage.getItem("corteCaja");
-    if(!JSON.parse(corteDeCaja)){
-      localStorage.setItem('corteCaja',dataObj )
+    let listaPorCobrar = localStorage.getItem("ajustes");
+    if(!JSON.parse(listaPorCobrar)){
+      localStorage.setItem('ajustes',dataObj )
     }else{
-      let addTojson = JSON.parse(corteDeCaja)
+      let addTojson = JSON.parse(listaPorCobrar)
       addTojson.push(dataJson)
-      localStorage.setItem('corteCaja',JSON.stringify(addTojson) )
+      localStorage.setItem('ajustes',JSON.stringify(addTojson) )
     }
   
-    toast.success('corte de caja realizado con éxito')
-    router.push('/cash-register')
+    toast.success('Ajuste realizado con éxito')
+    router.push('/adjustments')
 
   }
+
+  const columns = [
+    {
+      flex: 0.25,
+      width: 360,
+      minWidth: 360,
+      maxWidth: 360,
+      field: 'nombre',
+      headerName: 'Nombre',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.nombreProd}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      width: 270,
+      minWidth: 270,
+      maxWidth: 270,
+      field: 'proveedor',
+      headerName: 'Proveedor',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.proveedor}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      width: 200,
+      minWidth: 200,
+      maxWidth: 200,
+      field: 'almacen',
+      headerName: 'Almacen',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.almacen}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      width: 170,
+      minWidth: 170,
+      maxWidth: 170,
+      field: 'systemCount',
+      headerName: 'Cantidad Contada',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.cantidadContada}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    }, 
+    {
+      flex: 0.25,
+      width: 170,
+      minWidth: 170,
+      maxWidth: 170,
+      field: 'count',
+      headerName: 'Cantidad Sistema',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.CantidadSistem}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    }, 
+   
+  ]
 
 
 
@@ -379,63 +462,11 @@ const FormLayoutsSeparator = () => {
     mode: 'onChange',
   })
 
-  const handleChangeMoney =(tipo,item) =>{
-    
-    switch (tipo) {
-      case 'ef':
-        let cuentaFinal = cuentaDif;
-        let cuentaS = cuentaSistema;
-        let operacion =  item - cuentaS[0].monto
-        cuentaFinal[0].monto= operacion
-        setCuentaDif(cuentaFinal)
-        setEf(operacion)
-        
-        
-        break;
-      case 'td':
-        let cuentaFinaltd = cuentaDif;
-        let cuentaStd = cuentaSistema;
-        let operaciontd =  item -cuentaStd[1].monto 
-        cuentaFinaltd[1].monto= operaciontd
-        setCuentaDif(cuentaFinaltd) 
-        setTd(operaciontd)
-
-        break;
-      case 'tc':
-        let cuentaFinaltc = cuentaDif;
-        let cuentaStc = cuentaSistema;
-        let operaciontc =  item - cuentaStc[2].monto
-        cuentaFinaltc[2].monto= operaciontc
-        setCuentaDif(cuentaFinaltc) 
-        setTc(operaciontc)
-
-        break;
-      case 'tr':
-        let cuentaFinaltr = cuentaDif;
-        let cuentaStr = cuentaSistema;
-        let operaciontr = item - cuentaStr[3].monto
-        cuentaFinaltr[3].monto= operaciontr
-        setCuentaDif(cuentaFinaltr) 
-        setTr(operaciontr)
-        break;
-    }
-  }
-
-  const calcular = ()=>{
-    // SetTot(ef+tc+td+tr)
-   let cuenta = cuentaDif.map(e =>{
-      return e.monto
-    })
-    let total = cuenta.reduce((a, b) => a + b, 0);
-    SetTot(total)
-
-  }
-
 
   return (
     <>
     <Card>
-      <CardHeader title='Corte de caja' />
+      <CardHeader title='Agregar nuevo ajuste' />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
@@ -447,10 +478,10 @@ const FormLayoutsSeparator = () => {
             <Grid item xs={12} sm={6}>
             <Autocomplete
             required
+            readOnly
+            value={clientes[0] || []}
             onChange={(e, data) =>setClienteSelected(data)}
                 options={clientes}
-                defaultValue={clientes[0]}
-                readOnly
                 id='autocomplete-outlined'
                 getOptionLabel={option => option.nombre || ''}
                 renderInput={params => <TextField {...params} required label='Cliente' />}
@@ -461,85 +492,25 @@ const FormLayoutsSeparator = () => {
               <TextField required fullWidth name='descripcion' onChange={(e)=> setComments(e.target.value)}  label='Comentario' InputProps={{
           }} />
             </Grid>
-            <Grid item xs={12} sm={12} sx={{display:'flex', justifyContent:'space-around'}}>
-            {/* <DataGrid
+            <Grid item xs={12} sm={12}>
+            <DataGrid
               autoHeight
               rowHeight={62}
-              rows={cobros}
+              rows={productos}
               columns={columns}
               localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
               disableRowSelectionOnClick
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
-            /> */}
-            <Grid item xs={12} sx={{mr:2}} sm={12} md={4}>
-            <Card>
-      <CardHeader title='Dinero recibido' />
-      <CardContent >
-      <TextField onBlur={(e)=>{
-        setEf(parseInt(e.target.value))
-      handleChangeMoney('ef',e.target.value )
-        }} label='Efectivo'  sx={{mb:4}} id='size-small'  size='small' />
-      <TextField onBlur={(e)=>{
-        setEf(parseInt(e.target.value))
-      handleChangeMoney('td',e.target.value )
-        }} label='Tarjeta Debito'  sx={{mb:4}} id='size-small' size='small' />
-      <TextField onBlur={(e)=>{
-        setEf(parseInt(e.target.value))
-      handleChangeMoney('tc',e.target.value )
-        }} label='Tarjeta Credito' sx={{mb:4}}  id='size-small'  size='small' />
-      <TextField onBlur={(e)=>{
-        setEf(parseInt(e.target.value))
-      handleChangeMoney('tr',e.target.value )
-        }} label='Trasferencias' sx={{mb:4}} id='size-small'  size='small' />
-
-
-      </CardContent>
-    
-    </Card>
-          </Grid>
-          <Grid item xs={12} sx={{mx:2}} sm={12} md={4}>
-            <Card>
-      <CardHeader title='Cuenta Sistema' />
-      <CardContent>
-
-          {cuentaSistema.map((item, index) => (
-            <Typography key={index} variant='h6' sx={{ mb: 3.25 }}>
-            {`${item.nombre} $${item.monto}`}
-          </Typography>
-          ))}
-      </CardContent>
-   
-    </Card>
-          </Grid>
-          <Grid item xs={12} sx={{mx:2}} sm={12} md={4}>
-            <Card>
-      <CardHeader title='Diferencias' />
-      <CardContent>
-      {cuentaDif.map((item, index) => (
-            <Typography key={index} variant='h6' sx={{ mb: 3.25 }}>
-            {`${item.nombre} $${item.monto}`}
-          </Typography>
-          ))}
-           <Typography variant='h6' sx={{ mb: 3.25 }}>
-            TOTAL ${total}
-          </Typography>
-      </CardContent>
-    </Card>
-          </Grid>
+            />
             </Grid>
-
-            
           </Grid>
         
         </CardContent>
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
-        <Button onClick={()=> calcular()} size='large' variant='outlined'>
-            Calcular
-          </Button>
-          <Button onClick={()=> router.push('/cash-register')} size='large' variant='outlined'>
+          <Button onClick={()=> router.push('/adjustments')} size='large' variant='outlined'>
             Cancelar
           </Button>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>

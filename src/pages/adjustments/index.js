@@ -44,7 +44,7 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/cash-register/TableHeader'
+import TableHeader from 'src/views/apps/adjustments/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
 import { getAllRequesitions, changeStatusReqById } from 'src/api/RequestApi'
@@ -82,7 +82,9 @@ const PersonsType = ({ apiData }) => {
    },[])
 
    const llenarLista = ()=>{
-    setCobroLista(JSON.parse(localStorage.getItem('corteCaja')) || []);
+    let lista = JSON.parse(localStorage.getItem('ajustes')) || []
+    lista.reverse()
+    setCobroLista(lista);
    }
 
   const RowOptions = ({ id, data }) => {
@@ -107,7 +109,7 @@ const PersonsType = ({ apiData }) => {
    
   
     const handleEdit = (id) => {
-      router.push(`cash-register/${id}`);
+      router.push('purchase-orders/[id]', `purchase-orders/${id}`);
 
     }
 
@@ -161,14 +163,37 @@ const PersonsType = ({ apiData }) => {
           }}
           PaperProps={{ style: { minWidth: '8rem' } }}
         >
-         
-         {/* <MenuItem onClick={()=>{
-               handleEdit(data.id)
+          {/* <MenuItem
+            component={Link}
+            sx={{ '& svg': { mr: 2 } }}
+            href='/apps/user/view/account'
+            onClick={handleRowOptionsClose}
+          >
+            <Icon icon='tabler:eye' fontSize={20} />
+            View
+          </MenuItem>
+          */}
+          {/* <MenuItem onClick={()=>{handleEdit(data.id)}} sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='tabler:edit' fontSize={20} />
+            Editar
+          </MenuItem>  */}
+          <MenuItem onClick={()=>{
+            cancelarPago(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
-            Visualizar
-          </MenuItem> */}
+            <Icon icon='mdi:file-cancel-outline' fontSize={20} />
+            Cancelar
+          </MenuItem>
+          {
+            data.fechaCobro == 'Por cobrar' &&
+            <MenuItem onClick={()=>{
+              pagaPago(data.id)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='ic:outline-check' fontSize={20} />
+              Pagar
+            </MenuItem>
+          }
         
         </Menu>
       </>
@@ -208,7 +233,7 @@ const PersonsType = ({ apiData }) => {
       flex: 0.25,
       minWidth: 160,
       field: 'fecha',
-      headerName: 'Fecha de corte',
+      headerName: 'Fecha',
       renderCell: ({ row }) => {
 
         return (
@@ -232,8 +257,8 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 200,
-      field: 'cliente',
+      minWidth: 150,
+      field: 'user',
       headerName: 'Usuario',
       renderCell: ({ row }) => {
   
@@ -249,7 +274,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.cliente}
+                {row.usuario}
               </Typography>
             </Box>
           </Box>
@@ -258,9 +283,9 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 350,
-      field: 'tipo',
-      headerName: 'Comentarios',
+      minWidth: 200,
+      field: 'comentario',
+      headerName: 'Comentario',
       renderCell: ({ row }) => {
   
         return (
@@ -284,30 +309,28 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 350,
-      field: 'estado',
-      headerName: 'estado',
+      minWidth: 200,
+      field: 'estadp',
+      headerName: 'Estado',
       renderCell: ({ row }) => {
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.estado}
-              </Typography>
+            <CustomChip
+          rounded
+          skin='light'
+          size='small'
+          label={row.estado}
+          color={'success'}
+          sx={{ textTransform: 'capitalize' }}
+        />
             </Box>
           </Box>
         )
       }
-    }
+    },
+  
   ]
 
 

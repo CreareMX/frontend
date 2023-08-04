@@ -79,6 +79,10 @@ const navigation = () => {
           title: 'Salidas',
           path: '/departures'
         },
+        {
+          title: 'Ajustes',
+          path: '/adjustments'
+        },
 
         // {
         //   title: 'Resurtidos',

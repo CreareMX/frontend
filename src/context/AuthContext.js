@@ -125,7 +125,20 @@ const AuthProvider = ({ children }) => {
       let cajaChica = [
         {"id":1,"concepto":"Abono caja chica","fecha":date,"monto":500,"comentarios":"Se abono a la caja chica","tipo":"Abono"}
       ]
+
+      let ajustes = [
+        {
+          id:11 ,
+          usuario:'Administrador',
+          fecha: '1/8/2023',
+          estado:'Ajustado',
+          comentarios: 'Prueba de ajuste',
+        }
+      ]
+      
+
       window.localStorage.setItem('cajaChica', JSON.stringify(cajaChica))
+      window.localStorage.setItem('ajustes', JSON.stringify(ajustes))
       window.localStorage.setItem('dinero', '500')
       window.localStorage.setItem(authConfig.storageTokenKeyName, response.data)
           const returnUrl = router.query.returnUrl

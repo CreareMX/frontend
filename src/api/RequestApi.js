@@ -226,6 +226,16 @@ export const getAllTyperPersons = async () =>{
        return axiosApi.get(_URL)
    }
 
+   export const kardexBajoStock = async (idAlmacen) =>{
+    
+    let date = new Date().toISOString();
+
+    const _URL =`/api/Almacen/Inventarios/kardex/${date}/${idAlmacen}`;
+   
+       return axiosApi.get(_URL)
+   }
+
+
    export const getAllDepartures = async () =>{
     
     let date = new Date().toISOString();
@@ -266,6 +276,16 @@ export const getAllTyperPersons = async () =>{
    
        return axiosApi.post(_URL, data)
    }
+
+
+   export const entradaAlmacen = async (data, idUser) =>{
+    
+    const _URL = `/api/Almacen/Transferencias/${idUser}`;
+   
+       return axiosApi.post(_URL, data)
+   }
+
+
 
 
 

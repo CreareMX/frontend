@@ -71,10 +71,10 @@ const navigation = () => {
           path: '/inventary'
         },
 
-        // {
-        //   title: 'Traspasos',
-        //   path: '/transfers'
-        // },
+        {
+          title: 'Traspasos',
+          path: '/transfers'
+        },
         {
           title: 'Salidas',
           path: '/departures'

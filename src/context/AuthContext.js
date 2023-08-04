@@ -72,7 +72,9 @@ const AuthProvider = ({ children }) => {
           email: 'admin@mayoreo.com',
         }
         setUser(dataUser)
+      
         window.localStorage.setItem('userData', JSON.stringify(dataUser))
+
        setLoading(false)
       }else{
         localStorage.removeItem('userData')
@@ -109,6 +111,7 @@ const AuthProvider = ({ children }) => {
 
     try {
     const response = await postLogin(params)
+    let date = new Date().toLocaleDateString('es-MX')
 
     let dataUser = {
       id: 1,
@@ -119,6 +122,11 @@ const AuthProvider = ({ children }) => {
     }
 
     if(response.status === 200){
+      let cajaChica = [
+        {"id":1,"concepto":"Abono caja chica","fecha":date,"monto":500,"comentarios":"Se abono a la caja chica","tipo":"Abono"}
+      ]
+      window.localStorage.setItem('cajaChica', JSON.stringify(cajaChica))
+      window.localStorage.setItem('dinero', '500')
       window.localStorage.setItem(authConfig.storageTokenKeyName, response.data)
           const returnUrl = router.query.returnUrl
           setUser(dataUser)

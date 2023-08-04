@@ -404,6 +404,7 @@ const FormLayoutsSeparator = () => {
       console.log("🚀 ~ file: form.js:455 ~ productList.forEach ~ dataTranferncia:", dataTranferncia)
 
       const responseTranferencia= await trasferenciaAlmacen(dataTranferncia, 1)
+      console.log("🚀 ~ file: form.js:407 ~ productList.forEach ~ responseTranferencia:", responseTranferencia)
 
       if(responseTranferencia.status == 200){
          toast.success('Trasferencia generada con éxito')

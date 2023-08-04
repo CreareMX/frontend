@@ -82,7 +82,9 @@ const PersonsType = ({ apiData }) => {
    },[])
 
    const llenarLista = ()=>{
-    setCobroLista(JSON.parse(localStorage.getItem('cajaChica')) || []);
+    let lista = JSON.parse(localStorage.getItem('cajaChica')) || []
+    lista.reverse()
+    setCobroLista(lista);
    }
 
   const RowOptions = ({ id, data }) => {

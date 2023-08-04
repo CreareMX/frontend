@@ -162,13 +162,13 @@ const PersonsType = ({ apiData }) => {
           PaperProps={{ style: { minWidth: '8rem' } }}
         >
          
-         <MenuItem onClick={()=>{
+         {/* <MenuItem onClick={()=>{
                handleEdit(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='mdi:eye-outline' fontSize={20} />
             Visualizar
-          </MenuItem>
+          </MenuItem> */}
         
         </Menu>
       </>

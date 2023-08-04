@@ -21,6 +21,7 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select from '@mui/material/Select'
+import CardInfluencer from 'src/views/ui/cards/basic/CardInfluencer'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -78,7 +79,14 @@ const FormLayoutsSeparator = () => {
   const [clienteSelected, setClienteSelected] = useState(null)
   const [tipoPagoSelected, setTipoPagoSelected] = useState(null)
   const [monto, setmonto] = useState(null)
-
+  const [ef,setEf] = useState(0)
+  const [td,setTd] = useState(0)
+  const [tc,setTc] = useState(0)
+  const [tr,setTr] = useState(0)
+  const [total,SetTot] = useState(0)
+  const [cuentaSistema, setCuentaSistema] = useState([{nombre:'EF',monto:200},{nombre:'TD', monto:500},{nombre:'TC', monto:300},{nombre:'TR', monto:700},{nombre:'TOT', monto:1700}])
+  const [cuentaDif, setCuentaDif] = useState([{nombre:'EF',monto:0},{nombre:'TD', monto:0},{nombre:'TC', monto:0},{nombre:'TR', monto:0}])
+ 
   const [values, setValues] = useState({
     password: '',
     password2: '',
@@ -86,40 +94,13 @@ const FormLayoutsSeparator = () => {
     showPassword2: false
   })
 
-  const clientes = [
+  let clientes = [
     {
       id:1,
       nombre:'Administrador'
     },
   ]
 
-  const cobros = [
-    {
-      id:1,
-      cobrado:'Efectivo $150',
-      sistema: 'Efectivo $150',
-      diferencia: 'Efectivo $0'
-    },
-    {
-      id:2,
-      cobrado:'Tarjeta $450',
-      sistema: 'Tarjeta $400',
-      diferencia: 'Tarjeta $50'
-    },
-    {
-      id:3,
-      cobrado:'Transferencia $1250',
-      sistema: 'Transferencia $1280',
-      diferencia: 'Transferencia $30'
-    },
-    {
-      id:4,
-      cobrado:' Total $259',
-      sistema: 'Total $2579',
-      diferencia: 'Total $80'
-    },
-   
-  ]
 
   const columns = [
     {
@@ -398,6 +379,58 @@ const FormLayoutsSeparator = () => {
     mode: 'onChange',
   })
 
+  const handleChangeMoney =(tipo,item) =>{
+    
+    switch (tipo) {
+      case 'ef':
+        let cuentaFinal = cuentaDif;
+        let cuentaS = cuentaSistema;
+        let operacion =  item - cuentaS[0].monto
+        cuentaFinal[0].monto= operacion
+        setCuentaDif(cuentaFinal)
+        setEf(operacion)
+        
+        
+        break;
+      case 'td':
+        let cuentaFinaltd = cuentaDif;
+        let cuentaStd = cuentaSistema;
+        let operaciontd =  item -cuentaStd[1].monto 
+        cuentaFinaltd[1].monto= operaciontd
+        setCuentaDif(cuentaFinaltd) 
+        setTd(operaciontd)
+
+        break;
+      case 'tc':
+        let cuentaFinaltc = cuentaDif;
+        let cuentaStc = cuentaSistema;
+        let operaciontc =  item - cuentaStc[2].monto
+        cuentaFinaltc[2].monto= operaciontc
+        setCuentaDif(cuentaFinaltc) 
+        setTc(operaciontc)
+
+        break;
+      case 'tr':
+        let cuentaFinaltr = cuentaDif;
+        let cuentaStr = cuentaSistema;
+        let operaciontr = item - cuentaStr[3].monto
+        cuentaFinaltr[3].monto= operaciontr
+        setCuentaDif(cuentaFinaltr) 
+        setTr(operaciontr)
+        break;
+    }
+  }
+
+  const calcular = ()=>{
+    // SetTot(ef+tc+td+tr)
+   let cuenta = cuentaDif.map(e =>{
+      return e.monto
+    })
+    let total = cuenta.reduce((a, b) => a + b, 0);
+    SetTot(total)
+
+  }
+
 
   return (
     <>
@@ -428,8 +461,8 @@ const FormLayoutsSeparator = () => {
               <TextField required fullWidth name='descripcion' onChange={(e)=> setComments(e.target.value)}  label='Comentario' InputProps={{
           }} />
             </Grid>
-            <Grid item xs={12} sm={12}>
-            <DataGrid
+            <Grid item xs={12} sm={12} sx={{display:'flex', justifyContent:'space-around'}}>
+            {/* <DataGrid
               autoHeight
               rowHeight={62}
               rows={cobros}
@@ -439,7 +472,62 @@ const FormLayoutsSeparator = () => {
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
-            />
+            /> */}
+            <Grid item xs={12} sx={{mr:2}} sm={12} md={4}>
+            <Card>
+      <CardHeader title='Dinero recibido' />
+      <CardContent >
+      <TextField onBlur={(e)=>{
+        setEf(parseInt(e.target.value))
+      handleChangeMoney('ef',e.target.value )
+        }} label='Efectivo'  sx={{mb:4}} id='size-small'  size='small' />
+      <TextField onBlur={(e)=>{
+        setEf(parseInt(e.target.value))
+      handleChangeMoney('td',e.target.value )
+        }} label='Tarjeta Debito'  sx={{mb:4}} id='size-small' size='small' />
+      <TextField onBlur={(e)=>{
+        setEf(parseInt(e.target.value))
+      handleChangeMoney('tc',e.target.value )
+        }} label='Tarjeta Credito' sx={{mb:4}}  id='size-small'  size='small' />
+      <TextField onBlur={(e)=>{
+        setEf(parseInt(e.target.value))
+      handleChangeMoney('tr',e.target.value )
+        }} label='Trasferencias' sx={{mb:4}} id='size-small'  size='small' />
+
+
+      </CardContent>
+    
+    </Card>
+          </Grid>
+          <Grid item xs={12} sx={{mx:2}} sm={12} md={4}>
+            <Card>
+      <CardHeader title='Cuenta Sistema' />
+      <CardContent>
+
+          {cuentaSistema.map((item, index) => (
+            <Typography key={index} variant='h6' sx={{ mb: 3.25 }}>
+            {`${item.nombre} $${item.monto}`}
+          </Typography>
+          ))}
+      </CardContent>
+   
+    </Card>
+          </Grid>
+          <Grid item xs={12} sx={{mx:2}} sm={12} md={4}>
+            <Card>
+      <CardHeader title='Diferencias' />
+      <CardContent>
+      {cuentaDif.map((item, index) => (
+            <Typography key={index} variant='h6' sx={{ mb: 3.25 }}>
+            {`${item.nombre} $${item.monto}`}
+          </Typography>
+          ))}
+           <Typography variant='h6' sx={{ mb: 3.25 }}>
+            TOTAL ${total}
+          </Typography>
+      </CardContent>
+    </Card>
+          </Grid>
             </Grid>
 
             
@@ -448,6 +536,9 @@ const FormLayoutsSeparator = () => {
         </CardContent>
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
+        <Button onClick={()=> calcular()} size='large' variant='outlined'>
+            Calcular
+          </Button>
           <Button onClick={()=> router.push('/purchase-orders')} size='large' variant='outlined'>
             Cancelar
           </Button>

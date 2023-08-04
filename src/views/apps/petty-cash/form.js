@@ -77,7 +77,7 @@ const FormLayoutsSeparator = () => {
   const [comments, setComments] = useState('')
   const [conceptoSelected, setConceptoSelected] = useState(null)
   const [monto, setmonto] = useState(null)
-  const [dinero, setDinero] = useState(100)
+  const [dinero, setDinero] = useState(0)
 
   const [values, setValues] = useState({
     password: '',
@@ -176,7 +176,8 @@ const FormLayoutsSeparator = () => {
   }
 
   useEffect(()=>{
- 
+    let dineroDisponible = parseInt(localStorage.getItem('dinero'))
+    setDinero(dineroDisponible)
   },[])
 
   const RowOptions = ({ id, data }) => {
@@ -408,7 +409,20 @@ const FormLayoutsSeparator = () => {
       comentarios: comments,
       tipo:'Cargo'
     }
-    
+
+    let dineroDisponible = parseInt(localStorage.getItem('dinero'))
+    let dineroARestar = dineroDisponible - parseInt(monto)
+    console.log("🚀 ~ file: form.js:415 ~ onSubmit ~ dineroARestar:", dineroARestar)
+
+    if(dineroARestar < 0){
+      toast.error('Superaste el monto maximo')
+      
+      return
+
+    }
+
+    let NuevoDineroDisponible = localStorage.setItem('dinero', dineroARestar )
+
     arrayJson.push(dataJson)
 
     let dataObj = JSON.stringify(arrayJson);
@@ -502,7 +516,7 @@ const FormLayoutsSeparator = () => {
           </Grid>
 
           <Grid item xs={12} sm={11}>
-              <TextField required fullWidth name='descripcion' onChange={(e)=>setmonto(e.target.value)}  label='Monto' InputProps={{
+              <TextField  required fullWidth name='descripcion' onChange={(e)=>setmonto(e.target.value)}  label='Monto' InputProps={{
           }} />
             </Grid>
 

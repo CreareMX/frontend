@@ -234,7 +234,8 @@ const PersonsType = ({ apiData }) => {
     // },
     {
       flex: 0.25,
-      minWidth: 350,
+      minWidth: 500,
+      width: 400,
       field: 'producto',
       headerName: 'Producto',
       renderCell: ({ row }) => {
@@ -251,7 +252,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.producto.nombre}
+                {row.entradaAlmacen.producto.nombre}
               </Typography>
             </Box>
           </Box>
@@ -260,9 +261,9 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 400,
-      field: 'proveedor',
-      headerName: 'Proveedor',
+      minWidth: 200,
+      field: 'alamcenSalida',
+      headerName: 'Almacen Salida',
       renderCell: ({ row }) => {
   
         return (
@@ -277,7 +278,33 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row?.producto.nombre}
+                                {row?.salidaAlmacen?.almacen?.nombre}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 200,
+      field: 'entradaAlmacen',
+      headerName: 'Almacen Entrada',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                                {row?.entradaAlmacen?.almacen?.nombre}
               </Typography>
             </Box>
           </Box>
@@ -362,14 +389,14 @@ const PersonsType = ({ apiData }) => {
     //   }
     // },
   
-    {
-      flex: 0.1,
-      minWidth: 200,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Acciones',
-      renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
-    }
+    // {
+    //   flex: 0.1,
+    //   minWidth: 200,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Acciones',
+    //   renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
+    // }
   ]
 
 
@@ -401,7 +428,7 @@ const PersonsType = ({ apiData }) => {
         if(response.status === 200){
           console.log(response.data)
 
-          // setTypePersons(response.data)
+          setTypePersons(response.data)
           setLoading(false)
 
         }

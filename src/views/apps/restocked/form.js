@@ -60,7 +60,7 @@ import axios from 'axios'
 import TableHeader from 'src/views/apps/branch-office/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllBranchOffice, getAllPeople, getAllWarehouse, getAllProducts, postRequesitions, postRequesitionsDetail, getAllProductsbyIdProvider, changeStatusReqById } from 'src/api/RequestApi'
+import { getAllBranchOffice, getAllPeople, getAllWarehouse, getKardexByIdAlmacen, postSalidaAlmacen, getAllProductsbyIdProvider, changeStatusReqById } from 'src/api/RequestApi'
 import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -122,12 +122,16 @@ const FormLayoutsSeparator = () => {
     }
   }
 
-  const getWarehouse =  async() =>{
+  const getWarehouse =  async(idSucursal) =>{
+    console.log("🚀 ~ file: form.js:126 ~ getWarehouse ~ idSucursal:", idSucursal)
+
     try {
       setLoading(true)
         const response = await getAllWarehouse()
         if(response.status === 200){
-          setWarehouse(response.data)
+
+          const almacenes = response.data.filter(e=> e.sucursal.id == idSucursal)
+          setWarehouse(almacenes)
           setLoading(false)
 
         }
@@ -152,44 +156,31 @@ const FormLayoutsSeparator = () => {
     }
   }
 
-  const getProductsbyProvider =  async(id) =>{
+
+  const getAllProductsProvider =  async(idAlmacen) =>{
     try {
       setLoading(true)
-        const response = await getAllProductsbyIdProvider(id)
-        if(response.status === 200){
-          setProducts(response.data)
-          console.log(response.data)
-          setLoading(false)
+        const response = await getKardexByIdAlmacen(idAlmacen)
+        if(response.status === 200){          
 
+        setProducts(response.data.detalles)
+        console.log("🚀 ~ file: form.js:183 ~ getAllProductsProvider ~ response.data.detalles:", response.data.detalles)
         }
+        setLoading(false)
+
         
     } catch (error) {
       console.log(error)
-    }
-  }
 
-  const getAllProductsProvider =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllProducts()
-        console.log("🚀 ~ file: form.js:175 ~ getAllProductsProvider ~ response:", response)
-        if(response.status === 200){
-          setProducts(response.data)
-          console.log(response.data)
-          setLoading(false)
+      setProducts([])
 
-        }
-        
-    } catch (error) {
-      console.log(error)
+      setLoading(false)
+
     }
   }
 
   useEffect(()=>{
-    getPeople()
-    getWarehouse()
     getbranchOffices()
-    getAllProductsProvider()
   },[])
 
   const RowOptions = ({ id, data }) => {
@@ -220,21 +211,6 @@ const FormLayoutsSeparator = () => {
       setProductList(newArry)
         }
 
-     
-  
-    // const getTyperPersons =  async() =>{
-    //   try {
-    //       const response = await getAllTyperPersons()
-    //       if(response.status === 200){
-    //         console.log(response.data)
-    //         setTypePersons(response.data)
-  
-    //       }
-          
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
     
   
     return (
@@ -279,62 +255,6 @@ const FormLayoutsSeparator = () => {
     },
     {
       flex: 0.25,
-      width: 300,
-      minWidth: 300,
-      maxWidth: 450,
-      field: 'proveedor',
-      headerName: 'Proveedor',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.proveedor}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      width: 300,
-      minWidth: 300,
-      maxWidth: 450,
-      field: 'descripcion',
-      headerName: 'Descripción',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.descripcion}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    }, 
-    {
-      flex: 0.25,
       width: 100,
       minWidth: 100,
       maxWidth: 100,
@@ -355,34 +275,6 @@ const FormLayoutsSeparator = () => {
                 }}
               >
                 {row.cantidad}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    }, 
-    {
-      flex: 0.25,
-      width: 100,
-      minWidth: 100,
-      maxWidth: 100,
-      field: 'precio',
-      headerName: 'Precio',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row.precio}
               </Typography>
             </Box>
           </Box>
@@ -417,53 +309,71 @@ const FormLayoutsSeparator = () => {
 
     let date = new Date().toISOString();
 
-    let idProvider = productList[0]?.idProveedor
 
-    let dataReq = {
-      idCliente: idProvider,
-      idEmpleadoCrea: 7,
-      fecha: date,
-      fechaCompromiso:date,
-      fechaEnvio:date,
-      formaEnvio:'terestre',
-      idAlmacen: warehouseSelected.id,
-      idSucursal: branchOfficeSelected.id,
-      comentarios: comments,
-      idEstado:5
-    }
+    
+    productList.forEach(async(element) => {
 
-
-    try {
-      const response = await postRequesitions(dataReq, 1)
+      let dataSalida = {
+        idProducto: element.id,
+        cantidad: parseInt(element.cantidad),
+        fechaSalida:date,
+        idAlmacen: warehouseSelected.id,
+        idUnidad: 3,
+        idEstado:12,
+        idConcepto: 4,
+      }
+      
+       try {
+      const response = await postSalidaAlmacen(dataSalida, 1)
       
       if(response.status === 200){
 
-        let idReq = response.data.id
-
-
-        productList.forEach(async(element) => {
-
-          let dataDetail = {
-            idOrdenCompra: idReq,
-            idProducto: element.id,
-            cantidad: parseInt(element.cantidad),
-            descuento: 0
-          }
-          const response = await postRequesitionsDetail(dataDetail, 1)
-          
-        });
-
-        const response2 = await changeStatusReqById(idReq,5,1)
-
-      
-        toast.success('Orden de compra agregada con éxito')
-        router.push('/purchase-orders')
+        toast.success('Salida de producto generada con éxito')
+        router.push('/departures')
       }
       
       
     } catch (error) {
       console.log(error)
     }
+
+
+    });
+
+  
+
+
+    // try {
+    //   const response = await postRequesitions(dataReq, 1)
+      
+    //   if(response.status === 200){
+
+    //     let idReq = response.data.id
+
+
+        // productList.forEach(async(element) => {
+
+        //   let dataDetail = {
+        //     idOrdenCompra: idReq,
+        //     idProducto: element.id,
+        //     cantidad: parseInt(element.cantidad),
+        //     descuento: 0
+        //   }
+        //   const response = await postRequesitionsDetail(dataDetail, 1)
+          
+        // });
+
+    //     const response2 = await changeStatusReqById(idReq,5,1)
+
+      
+    //     toast.success('Orden de compra agregada con éxito')
+    //     router.push('/purchase-orders')
+    //   }
+      
+      
+    // } catch (error) {
+    //   console.log(error)
+    // }
 
 
   }
@@ -475,24 +385,24 @@ const FormLayoutsSeparator = () => {
 
       return
     }
+    console.log("🚀 ~ file: form.js:439 ~ addProductsToList ~ data:", data)
 
     const product = {
-      id: data?.idProducto,
+      id: data?.producto.id,
       nombre: data?.producto?.nombre,
-      descripcion: data?.producto?.descripcion,
       cantidad: parseInt(count),
-      precio:data?.producto?.precios[0]?.monto,
-      idProveedor:data?.idProveedor,
-      proveedor:data?.proveedor?.nombre
     }
 
-    const found = productList.some(el => el.id === data.id);
+    const found = productList.some(el => el.id === data.producto.id);
 
     if(found){
       setCount('')
       setProductSelected('')
       setProviderId('')
-      toast.error('Ya existe el producto en la lista')
+      let index = productList.findIndex( el => el.id === data.producto.id )
+      productList[index].cantidad= parseInt(count)    
+
+      // toast.error('Ya existe el producto en la lista')
 
     }else if(count ===''){
       toast.error('Seleccione la cantidad deseada')
@@ -528,21 +438,43 @@ const FormLayoutsSeparator = () => {
   return (
     <>
     <Card>
-      <CardHeader title='Nuevo traspaso' />
+      <CardHeader title='Nueva Salida' />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
-          <Grid container spacing={5}>   
-            <Grid item xs={6} sm={12}>
+          <Grid container spacing={5}>
+            <Grid item xs={6} sm={6}>
             <Autocomplete
             required
-            onChange={(e, data) =>setWarehouseSelected(data)}
-                options={warehouse}
+            onChange={(e, data) =>{setBranchOfficeSelected(data)
+              getWarehouse(data.id)
+              setWarehouseSelected('')
+            }}
+                options={branchOffice}
                 id='autocomplete-outlined'
                 getOptionLabel={option => option.nombre || ''}
-                renderInput={params => <TextField {...params} required label='Almacen' />}
+                renderInput={params => <TextField {...params} required label='Sucursal' />}
             />
             </Grid>
+            <Grid item xs={6} sm={6}>
+            <Autocomplete
+            required
+           
+            onChange={(e, data) =>{setWarehouseSelected(data)
+              getAllProductsProvider(data.id)
+            }}
+                options={warehouse}
+                value={warehouseSelected}
+                id='autocomplete-outlined'
+                disabled={warehouse.length == 0}
+                getOptionLabel={option => option.nombre || ''}
+                renderInput={params => <TextField {...params}  required label='Almacen' />}
+            />
+            </Grid>
+           
+            {/* <Grid item xs={12} sm={12}>
+              <TextField fullWidth name='motivo' onChange={(value) => setComments(value.target.value)} label='Motivo' />
+            </Grid> */}
             <Grid item xs={12}>
               <Typography variant='body2' sx={{ fontWeight: 600 }}>
                 Agregar Productos
@@ -552,6 +484,7 @@ const FormLayoutsSeparator = () => {
             <Autocomplete
             
             value={productSelected || ''}
+            disabled={products.length== 0}
                 onChange={(e, data) =>{
                   setProviderId(data?.proveedor)
                   setProductSelected(data)
@@ -581,12 +514,8 @@ const FormLayoutsSeparator = () => {
                 renderInput={params => <TextField {...params} label='Proveedor' />}
             />
             </Grid> */}
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth name='descripcion' value={productSelected?.producto?.descripcion || ''} label='Descripción' InputProps={{
-    readOnly: true,
-  }} />
-            </Grid>
-            <Grid item xs={12} sm={10}>
+          
+            <Grid item xs={12} sm={4}>
               <TextField fullWidth name='cantidad' value={count || ''} onChange={(value)=>{
                 setCount(value.target.value)
                  console.log(value.target.value)
@@ -594,7 +523,6 @@ const FormLayoutsSeparator = () => {
             </Grid>
             <Grid item xs={12} sm={2} sx={{display:'flex', justifyContent:'center', alignItems:'center'}}>
             <Button onClick={()=>{
-              getAllProductsProvider()
               addProductsToList(productSelected)}} size='medium' sx={{ mr: 2 }} variant='outlined'>
             Agregar
           </Button>
@@ -605,6 +533,7 @@ const FormLayoutsSeparator = () => {
               rowHeight={62}
               rows={productList}
               columns={columns}
+              getRowId={(row) =>  row?.id}
               localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
               disableRowSelectionOnClick
               pageSizeOptions={[10, 25, 50]}
@@ -616,7 +545,7 @@ const FormLayoutsSeparator = () => {
         </CardContent>
         <Divider sx={{ m: '0 !important' }} />
         <CardActions style={{display:'flex', justifyContent:'flex-end'}}>
-          <Button onClick={()=> router.push('/purchase-orders')} size='large' variant='outlined'>
+          <Button onClick={()=> router.push('/departures')} size='large' variant='outlined'>
             Cancelar
           </Button>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>

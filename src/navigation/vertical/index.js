@@ -63,7 +63,7 @@ const navigation = () => {
       icon: 'ph:package-light',
       children: [
         {
-          title: 'OC por recibir',
+          title: 'Entradas',
           path: '/orders-to-receive'
         },
         {

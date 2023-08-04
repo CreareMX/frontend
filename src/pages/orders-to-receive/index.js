@@ -47,8 +47,7 @@ import axios from 'axios'
 import TableHeader from 'src/views/apps/orders-to-receive/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllRequesitions } from 'src/api/RequestApi'
-import { deleteBranchOffice } from 'src/api/RequestApi'
+import { getAllRequesitions,getOrderDetail,deleteBranchOffice,entradaAlmacen,changeStatusReqById } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 
 
@@ -73,6 +72,76 @@ const PersonsType = ({ apiData }) => {
   const [currentPerson, setCurrentPerson] = useState({})
   const [id,setId] = useState(null)
 
+
+
+  const validarEntrada = async(data) =>{
+
+    try {
+      const response = await getOrderDetail(data.id )
+      
+      
+      if(response.status === 200){
+        
+        const product = []
+
+        response.data.map(e=>{
+          let data = {
+            id: e?.idProducto,
+            nombre: e?.producto?.nombre,
+            descripcion: e?.producto.descripcion,
+            cantidad: e?.cantidad
+          }
+          product.push(data)
+        })
+
+        
+        let date = new Date().toISOString();
+
+
+    
+        product.forEach(async(element) => {
+    
+          let dataEntrada = {
+            idProducto: element.id,
+            cantidad: parseInt(element.cantidad),
+            fechaEntrada:date,
+            idAlmacen: data.almacen.id,
+            idUnidad: 3,
+            idEstado:12,
+            idConcepto: 2,
+          }
+          
+           try {
+          const response = await entradaAlmacen(dataEntrada, 1)
+               
+          
+        } catch (error) {
+          console.log(error)
+        }
+
+    
+        });
+
+
+        try {
+          const response = await changeStatusReqById(data.id,12,1)
+          if(response.status === 200){
+            toast.success('Entrada generada con éxito')
+            getRequesitions()
+          }
+          
+      } catch (error) {
+        console.log(error)
+      }
+           
+      }
+      
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
 
   const RowOptions = ({ id, data }) => {
@@ -135,16 +204,8 @@ const PersonsType = ({ apiData }) => {
           }}
           PaperProps={{ style: { minWidth: '8rem' } }}
         >
-          {/* <MenuItem
-            component={Link}
-            sx={{ '& svg': { mr: 2 } }}
-            href='/apps/user/view/account'
-            onClick={handleRowOptionsClose}
-          >
-            <Icon icon='tabler:eye' fontSize={20} />
-            View
-          </MenuItem>
-          */}
+        
+          
          
           <MenuItem onClick={()=>{
                handleEdit(data.id)
@@ -152,6 +213,13 @@ const PersonsType = ({ apiData }) => {
              sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='mdi:eye-outline' fontSize={20} />
             Visualizar
+          </MenuItem>
+          <MenuItem onClick={()=>{
+            validarEntrada(data)
+            }}
+             sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='ic:outline-check' fontSize={20} />
+            Entrada
           </MenuItem>
         </Menu>
       </>
@@ -402,8 +470,9 @@ const PersonsType = ({ apiData }) => {
         const response = await getAllRequesitions()
         if(response.status === 200){
           console.log(response.data)
-          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'OC_PAGADA')
+          let purchaseOrders = response.data.filter(e => e.estado.nombre === 'OC_PAGADA' || e.estado.nombre === 'AUTORIZADO' )
           purchaseOrders.reverse()
+          console.log("🚀 ~ file: index.js:475 ~ getRequesitions ~ purchaseOrders:", purchaseOrders)
           setTypePersons(purchaseOrders)
           setLoading(false)
 

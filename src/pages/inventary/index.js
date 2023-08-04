@@ -256,14 +256,15 @@ const PersonsType = ({ apiData }) => {
         )
       }
     },
-    {
-      flex: 0.1,
-      minWidth: 200,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Acciones',
-      renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
-    }
+    
+    // {
+    //   flex: 0.1,
+    //   minWidth: 200,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Acciones',
+    //   renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
+    // }
   ]
 
 
@@ -381,6 +382,7 @@ console.log(error)
   }
 
   const handleChangeSucursal =(sucursal)=>{
+    setTypePersons([])
     getAlmacenBySucursal(sucursal.target.value)
     setSucursal(sucursal.target.value)
   }

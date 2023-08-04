@@ -278,14 +278,6 @@ export const getAllTyperPersons = async () =>{
    }
 
 
-   export const entradaAlmacen = async (data, idUser) =>{
-    
-    const _URL = `/api/Almacen/Transferencias/${idUser}`;
-   
-       return axiosApi.post(_URL, data)
-   }
-
-
 
 
 

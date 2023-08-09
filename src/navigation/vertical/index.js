@@ -25,6 +25,7 @@ const navigation = () => {
           title: 'Proveedores',
           path: '/providers'
         },
+   
 
         // {
         //   title: 'Proveedores',
@@ -84,10 +85,10 @@ const navigation = () => {
           path: '/adjustments'
         },
 
-        // {
-        //   title: 'Resurtidos',
-        //   path: '/restocked'
-        // },
+        {
+          title: 'Resurtidos',
+          path: '/restocked'
+        },
       ]
     },
     {

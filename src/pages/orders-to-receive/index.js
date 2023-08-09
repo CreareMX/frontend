@@ -422,8 +422,8 @@ const PersonsType = ({ apiData }) => {
           rounded
           skin='light'
           size='small'
-          label={row.estado.nombre === 'OC_PAGADA' ? 'PENDIENTE': ''}
-          color={row.estado.nombre === 'OC_PAGADA' ? 'info' : ''}
+          label={row.estado.nombre === 'AUTORIZADO' ? 'RECIBIDO': row.estado.nombre === 'OC_PAGADA' ? 'PENDIENTE' : ''}
+          color={row?.estado?.nombre == 'AUTORIZADO' ? 'primary' : row?.estado?.nombre == 'OC_PAGADA' ?'secondary' :  ''}
           sx={{ textTransform: 'capitalize' }}
         />
             </Box>

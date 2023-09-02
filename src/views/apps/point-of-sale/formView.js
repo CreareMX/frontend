@@ -340,10 +340,10 @@ const FormLayoutsSeparator = () => {
     }else{
       setCambio('N/A')
     }
-  },[montoRecibido])
+  },[total])
 
   const requiereCambio = () =>{
-
+    
     setCambio((montoRecibido - total).toFixed(2))
   }
 
@@ -386,7 +386,6 @@ const FormLayoutsSeparator = () => {
    setProductList(listaF.productos)
    setClienteSelected(listaF.cliente)
    setMontoRecibido(listaF.montoRecibido)
-   console.log(listaF)
   }
 
   const RowOptions = ({ id, data }) => {

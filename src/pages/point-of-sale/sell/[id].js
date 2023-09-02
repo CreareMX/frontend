@@ -22,4 +22,19 @@ const FormLayouts = () => {
   )
 }
 
+export const getStaticPaths = async () => {
+
+
+  let listaFiltrada = JSON.parse(localStorage.getItem('puntoVenta')) || []
+
+  const paths = listaFiltrada.map(item => ({
+    params: { id: `${item.id}` }
+  }))
+
+  return {
+    paths,
+    fallback: true
+  }
+}
+
 export default FormLayouts

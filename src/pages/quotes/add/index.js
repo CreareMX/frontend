@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Demo Components Imports
-import Form from 'src/views/apps/cash-register/form'
+import Form from 'src/views/apps/quotes/form'
 
 const FormLayouts = () => {
   return (

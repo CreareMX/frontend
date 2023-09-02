@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -42,10 +44,10 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/branch-office/TableHeader'
+import TableHeader from 'src/views/apps/point-of-sale/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
-import { getAllBranchOffice } from 'src/api/RequestApi'
+import { getAllRequesitions, changeStatusReqById } from 'src/api/RequestApi'
 import { deleteBranchOffice } from 'src/api/RequestApi'
 import toast from 'react-hot-toast'
 
@@ -53,6 +55,9 @@ import toast from 'react-hot-toast'
 
 
 const PersonsType = ({ apiData }) => {
+
+  const router = useRouter()
+
   // ** State
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -67,8 +72,22 @@ const PersonsType = ({ apiData }) => {
   const [nombre,setNombre] = useState('')
   const [currentPerson, setCurrentPerson] = useState({})
   const [id,setId] = useState(null)
+  const [puntoVentaLista,setPuntoVentaLista] = useState([])
+  const [listaPuntoDeVenta,setlListaPuntoDeVenta] = useState([])
 
 
+
+
+   useEffect(()=>{
+    llenarLista()
+   },[])
+
+   const llenarLista = ()=>{
+    let listaFiltrada = JSON.parse(localStorage.getItem('puntoVenta')) || []
+    let listaF = listaFiltrada.filter(e => e.estado == 'vendido' || e.estado == 'cobrado' || e.estado == 'cancelarPV' || e.estado == 'vendidoP')
+    setPuntoVentaLista(listaF)
+    setlListaPuntoDeVenta(listaFiltrada)
+   }
 
   const RowOptions = ({ id, data }) => {
     // ** Hooks
@@ -78,6 +97,7 @@ const PersonsType = ({ apiData }) => {
     const [anchorEl, setAnchorEl] = useState(null)
     const rowOptionsOpen = Boolean(anchorEl)
   
+
   
   
     const handleRowOptionsClick = event => {
@@ -90,27 +110,36 @@ const PersonsType = ({ apiData }) => {
   
    
   
-    const handleEdit = () => {
-      setCurrentPerson(data)
-      setEditUserOpen(!editUserOpen)
-      handleRowOptionsClose()
+    const handleEdit = (id) => {
+      router.push('purchase-orders/[id]', `purchase-orders/${id}`);
+
     }
 
-  
-    // const getTyperPersons =  async() =>{
-    //   try {
-    //       const response = await getAllTyperPersons()
-    //       if(response.status === 200){
-    //         console.log(response.data)
-    //         setTypePersons(response.data)
-  
-    //       }
-          
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
+    const rechazarOC = async(id) =>{
+      try {
+       const response = await changeStatusReqById(id,10,1)
+       if(response.status === 200){
+         toast.success('Requisición rechazada correctamente')
+         getRequesitions()
+       }
+       
+    } catch (error) {
+     console.log(error)
+    }
+    }
     
+    const cancelar = async(id) =>{
+      let lista = [...listaPuntoDeVenta]
+      let objWithIdIndex = lista.findIndex((obj) => obj.id === id);
+      lista[objWithIdIndex].estado = 'cancelarPV'
+
+      JSON.stringify(localStorage.setItem('puntoVenta', JSON.stringify(lista) ))
+      setPuntoVentaLista(lista)
+      toast.success('Orden cancelada con éxito')
+      llenarLista()
+    }
+  
+  
   
     return (
       <>
@@ -142,33 +171,65 @@ const PersonsType = ({ apiData }) => {
             View
           </MenuItem>
           */}
-          <MenuItem onClick={handleEdit} sx={{ '& svg': { mr: 2 } }}>
+          {/* <MenuItem onClick={()=>{handleEdit(data.id)}} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:edit' fontSize={20} />
             Editar
-          </MenuItem> 
+          </MenuItem>  */}
+          { 
+          (data.estado == 'vendido' || data.estado == 'vendidoP') &&
           <MenuItem onClick={()=>{
-            const nombre = data?.nombre
-            setNombre(nombre)
-            setId(data.id)
-            setOpenModal(true)
+            cancelar(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:trash' fontSize={20} />
-            Eliminar
+            <Icon icon='mdi:file-cancel-outline' fontSize={20} />
+            Cancelar
           </MenuItem>
+         }
+          { 
+          (data.estado == 'vendido' || data.estado == 'vendidoP') &&
+          <MenuItem onClick={()=>{
+              cobrar(data.id)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='fluent:money-24-regular' fontSize={20} />
+              Cobrar
+            </MenuItem>
+          }
+           { 
+          data.estado == 'cobrado'  &&
+          <MenuItem onClick={()=>{
+            visualizar(data.id)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='mdi:eye-outline' fontSize={20} />
+              Visualizar
+            </MenuItem>
+          }
+          { 
+          data.estado == 'cancelarPV'  &&
+          <MenuItem onClick={()=>{
+            visualizar(data.id)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              Sin opciones
+            </MenuItem>
+          }
+        
         </Menu>
       </>
     )
   }
   
+
+
   const columns = [
     {
       flex: 0.25,
-      minWidth: 280,
-      field: 'nombre',
-      headerName: 'Nombre',
+      maxWidth:80,
+      minWidth: 80,
+      field: 'id',
+      headerName: 'Id',
       renderCell: ({ row }) => {
-        const { nombre, email } = row
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -182,70 +243,21 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {nombre}
+                {row.id}
               </Typography>
             </Box>
           </Box>
         )
       }
     },
-  
-    // {
-    //   flex: 0.15,
-    //   field: 'role',
-    //   minWidth: 170,
-    //   headerName: 'Rol',
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    //         <CustomAvatar
-    //           skin='light'
-    //           sx={{ mr: 4, width: 30, height: 30 }}
-    //           color={userRoleObj[row.role].color || 'primary'}
-    //         >
-    //           <Icon icon={userRoleObj[row.role].icon} />
-    //         </CustomAvatar>
-    //         <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-    //           {row.role}
-    //         </Typography>
-    //       </Box>
-    //     )
-    //   }
-    // },
-  
-    // {
-    //   flex: 0.15,
-    //   minWidth: 120,
-    //   headerName: 'Plan',
-    //   field: 'currentPlan',
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'capitalize' }}>
-    //         {row.currentPlan}
-    //       </Typography>
-    //     )
-    //   }
-    // },
-    // {
-    //   flex: 0.15,
-    //   minWidth: 190,
-    //   field: 'billing',
-    //   headerName: 'Pago',
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Typography noWrap sx={{ color: 'text.secondary' }}>
-    //         {row.billing}
-    //       </Typography>
-    //     )
-    //   }
-    // },
     {
       flex: 0.25,
-      minWidth: 280,
-      field: 'telefono',
-      headerName: 'Télefono',
+      minWidth: 130,
+      maxWidth:130,
+      field: 'fecha',
+      headerName: 'Fecha',
       renderCell: ({ row }) => {
-  
+
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
@@ -258,7 +270,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.telefono}
+                {row.fecha}
               </Typography>
             </Box>
           </Box>
@@ -267,14 +279,15 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 280,
-      field: 'domic',
-      headerName: 'domicilio',
+      minWidth: 200,
+      maxWidth:200,
+      field: 'cliente',
+      headerName: 'Cliente',
       renderCell: ({ row }) => {
   
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography
                 noWrap
                 sx={{
@@ -284,24 +297,150 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.domicilio}
+                {row.cliente}
               </Typography>
             </Box>
           </Box>
         )
       }
     },
+    {
+      flex: 0.25,
+      minWidth: 200,
+      field: 'vendedor',
+      headerName: 'Vendedor',
+      renderCell: ({ row }) => {
   
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.vendedor}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 150,
+      maxWidth:150,
+      field: 'tipo',
+      headerName: 'tipo',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row.estado == 'vendidoP' ? 'Pedido' : 'Venta'}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 200,
+      field: 'monto',
+      headerName: 'Monto',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                $ {row.monto}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 200,
+      field: 'tipoPago',
+      headerName: 'Tipo de pago',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  color: 'text.secondary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {row?.tipoPago ? row?.tipoPago : 'N/A' }
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.25,
+      minWidth: 200,
+      field: 'estado',
+      headerName: 'Estado',
+      renderCell: ({ row }) => {
+  
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <CustomChip
+          rounded
+          skin='light'
+          size='small'
+          label={row?.estado == 'vendido' ? 'pendiente' : row?.estado == 'vendidoP' ? 'pendiente' : row?.estado == 'cobrado' ? 'cobrado' : 'cancelado'}
+          color={row?.estado == 'vendido' ? 'info' :  row?.estado == 'vendidoP' ? 'info' : row?.estado == 'cobrado' ? 'success' : 'error'}
+          sx={{ textTransform: 'uppercase' }}
+        />
+            </Box>
+          </Box>
+        )
+      }
+    },
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 200,
       sortable: false,
       field: 'actions',
       headerName: 'Acciones',
       renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
     }
   ]
-
 
   // ** Hooks
   const dispatch = useDispatch()
@@ -324,13 +463,13 @@ const PersonsType = ({ apiData }) => {
   
 
 
-  const getTyperPersons =  async() =>{
+  const getRequesitions =  async() =>{
     try {
       setLoading(true)
-        const response = await getAllBranchOffice()
+        const response = await getAllRequesitions()
         if(response.status === 200){
           console.log(response.data)
-          setTypePersons(response.data)
+         
           setLoading(false)
 
         }
@@ -339,6 +478,29 @@ const PersonsType = ({ apiData }) => {
       console.log(error)
     }
   }
+
+  const cobrar = async(id) =>{
+  router.push('point-of-sale/sell/'+id)
+   
+}
+
+const visualizar = async(id) =>{
+  router.push('point-of-sale/view/'+id)
+   
+}
+
+const cancelarPago = async(id) =>{
+  let lista = [...listaPuntoDeVenta]
+  let objWithIdIndex = lista.findIndex((obj) => obj.id === id);
+  lista[objWithIdIndex].estado = 'canceladoPV'
+
+  JSON.stringify(localStorage.setItem('puntoVenta', JSON.stringify(lista) ))
+  setCotizacionesLista(lista)
+  toast.success('Registro cancelado')
+  llenarLista()
+
+
+ }
   
   const handleDelete = async() => {
   
@@ -349,7 +511,7 @@ const PersonsType = ({ apiData }) => {
       const response = await deleteBranchOffice(data, 1)
 
       if(response.status == 200){
-       await getTyperPersons()
+       await getRequesitions()
         toast.success('Sucursal eliminada con éxito')
 
       }
@@ -360,16 +522,11 @@ const PersonsType = ({ apiData }) => {
 
   }
 
-  useEffect(() => {
-    getTyperPersons()
-  },[]);
+
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setEditUserOpen(!editUserOpen)
 
-  const sucessSubmit = () =>{
-    getTyperPersons()
-  }
 
   const closeModal = () =>{
       setOpenModal(false)
@@ -462,7 +619,7 @@ const PersonsType = ({ apiData }) => {
           <DataGrid
             autoHeight
             rowHeight={62}
-            rows={typePersons}
+            rows={puntoVentaLista}
             columns={columns}
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             disableRowSelectionOnClick
@@ -474,16 +631,24 @@ const PersonsType = ({ apiData }) => {
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} sucess={sucessSubmit} toggle={toggleAddUserDrawer} />
-      <SidebarEditPeople open={editUserOpen} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
+
 
       { openModal &&
-       <DialogAlert open={openModal} title={'Desea eliminar la sucursal ' + nombre} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
-      }
+       <DialogAlert open={openModal} title={'Desea cancelar la orden de compra'} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+        }
     </Grid>
   )
 }
 
+export const getStaticProps = async () => {
+  const res = await axios.get('/cards/statistics')
+  const apiData = res.data
 
+  return {
+    props: {
+      apiData
+    }
+  }
+}
 
 export default PersonsType

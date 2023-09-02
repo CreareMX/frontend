@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Demo Components Imports
-import FormRequisition from 'src/views/apps/cash-register/formView'
+import Form from 'src/views/apps/cash-register/formView'
 
 const FormLayouts = () => {
 
@@ -16,7 +16,7 @@ const FormLayouts = () => {
       <Grid container spacing={6}>
        
         <Grid item xs={12}>
-          <FormRequisition />
+          <Form />
         </Grid>
        
       </Grid>

@@ -93,7 +93,7 @@ const navigation = () => {
     },
     {
       title: 'Egresos',
-      icon: 'mi:log-out',
+      icon: 'iconoir:log-in',
       children: [
         {
           title: 'Programación pagos',
@@ -116,6 +116,28 @@ const navigation = () => {
         {
           title: 'Caja chica',
           path: '/petty-cash'
+        },
+      ]
+    },
+    {
+      title: 'Ventas',
+      icon: 'mi:log-out',
+      children: [
+        {
+          title: 'Punto de venta',
+          path: '/point-of-sale'
+        },
+        {
+          title: 'Cotizaciones',
+          path: '/quotes'
+        },
+        {
+          title: 'Pedidos',
+          path: '/orders'
+        },
+        {
+          title: 'Asignación de pedidos',
+          path: '/order-assignment'
         },
       ]
     },

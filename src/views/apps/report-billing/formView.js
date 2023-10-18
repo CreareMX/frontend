@@ -55,40 +55,15 @@ import { useForm, Controller } from 'react-hook-form'
 // ** Data
 import { top100Films } from 'src/@fake-db/autocomplete'
 
-const CustomInput = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Fecha' autoComplete='off' />
-})
-
 const FormLayoutsSeparator = () => {
   const router = useRouter()
 
   // ** States
-  const [date, setDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
-  const [startDate, setStartDate] = useState(null)
-  const [language, setLanguage] = useState([])
-  const [productList, setProductList] = useState([])
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
-  const [providers, setProviders] = useState([])
   const [loading, setLoading] = useState(false)
-  const [warehouse, setWarehouse] = useState([])
-  const [providerId, setProviderId] = useState('')
-  const [count,setCount] = useState('')
-  const [comments, setComments] = useState('')
-  const [clienteSelected, setClienteSelected] = useState(null)
-  const [tipoPagoSelected, setTipoPagoSelected] = useState(null)
-  const [monto, setmonto] = useState(null)
-  const [productSelected, setProductSelected] = useState('')
-  const [products, setProducts] = useState([])
-  const [total, setTotal] = useState(0)
-  const [dataSell,setDataSell] = useState(null)
-  const [cliente ,setCliente] = useState('')
-  const [montoRecibido, setMontoRecibido] = useState(0)
-  const [cambio, setCambio] = useState('')
-  const [idVenta, setIdVenta] = useState(null)
   const [productos, setProductos] = useState([])
   const [recibo, setRecibo] = useState(null)
-
+  
   const [values, setValues] = useState({
     password: '',
     password2: '',
@@ -544,7 +519,6 @@ const FormLayoutsSeparator = () => {
     if(router.query.id){
         getRecibo(parseInt(router.query.id))
     }
-
   },[router.query.id])
 
 
@@ -554,52 +528,9 @@ const FormLayoutsSeparator = () => {
     setRecibo(registro)
 
     setProductos(registro.conceptosVenta)
-    
-    // setProductList(dataSell.conceptosVenta)
-  }
+      }
   
 
-  const getPeople =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllPeople()
-        if(response.status === 200){
-          
-          const proveedores = response.data.filter(e=>e.tipoPersona.nombre ==='PROVEEDOR')
-          
-          setProviders(proveedores)
-          setLoading(false)
-
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleOnChange = dates => {
-   console.log(dates)
-   setStartDate(dates)
-  }
-
-  const getWarehouse =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllWarehouse()
-        if(response.status === 200){
-          setWarehouse(response.data)
-          setLoading(false)
-
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const getbranchOffices =  async() =>{
-
-  }
 
   const columns = [
     {
@@ -630,35 +561,6 @@ const FormLayoutsSeparator = () => {
         )
       }
     },
-
-    // {
-    //   flex: 0.25,
-    //   width: 300,
-    //   minWidth: 300,
-    //   maxWidth: 450,
-    //   field: 'proveedor',
-    //   headerName: 'Proveedor',
-    //   renderCell: ({ row }) => {
-  
-    //     return (
-    //       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    //         <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-    //           <Typography
-    //             noWrap
-    //             sx={{
-    //               fontWeight: 500,
-    //               textDecoration: 'none',
-    //               color: 'text.secondary',
-    //               '&:hover': { color: 'primary.main' }
-    //             }}
-    //           >
-    //             {row.proveedor}
-    //           </Typography>
-    //         </Box>
-    //       </Box>
-    //     )
-    //   }
-    // },
     {
       flex: 0.25,
       width: 300,
@@ -680,7 +582,7 @@ const FormLayoutsSeparator = () => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.cantidad}
+                {row?.cantidad}
               </Typography>
             </Box>
           </Box>
@@ -708,7 +610,7 @@ const FormLayoutsSeparator = () => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.precioUnitario}
+                {row?.precioUnitario}
               </Typography>
             </Box>
           </Box>
@@ -736,7 +638,7 @@ const FormLayoutsSeparator = () => {
                     '&:hover': { color: 'primary.main' }
                   }}
                 >
-                  {row.total}
+                  {row?.total}
                 </Typography>
               </Box>
             </Box>
@@ -748,243 +650,16 @@ const FormLayoutsSeparator = () => {
 
   ]
 
-  const getProductsbyProvider =  async(id) =>{
-    try {
-      setLoading(true)
-        const response = await getAllProductsbyIdProvider(id)
-        if(response.status === 200){
-          console.log(response.data)
-          setLoading(false)
-
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const getAllProductsProvider =  async() =>{
-    try {
-      setLoading(true)
-        const response = await getAllProducts()
-        if(response.status === 200){
-          setProducts(response.data)
-          setLoading(false)
-
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(()=>{
-    getAllProductsProvider()
-  },[])
-
-//   useEffect(()=>{
-//     totalProductos(productList)
-//   },[productList])
-
-//   const totalProductos = (productList)=>{
-//     let totaIndividual = 0
-
-//   let total = productList.forEach(element => {
-//     totaIndividual+= (element.precio*element.cantidad)
-//     });
-//     setTotal(0)
-//   }
-
-
-  useEffect(()=>{
-    if(router.query.id){
-      getSellData(router.query.id)
-      setIdVenta(router.query.id)
-    }
-  },[router.query])
-
-  useEffect(()=>{
-    if(montoRecibido > total){
-      requiereCambio()
-    }else{
-      setCambio('N/A')
-    }
-  },[total])
-
-  const requiereCambio = () =>{
-    
-    setCambio((montoRecibido - total).toFixed(2))
-  }
-
-  const addProductsToList = (data)=>{
-
-
-    const product = {
-      id: data?.idProducto,
-      nombre: data?.producto?.nombre,
-      cantidad: parseInt(count),
-      precio:data?.producto?.precios[0]?.monto,
-      idProveedor:data?.idProveedor,
-      proveedor:data?.proveedor?.nombre
-    }
-    const found = productList.some(el => el.id === data.id);
-
-    if(found){
-      setCount('')
-      setProductSelected('')
-      setProviderId('')
-      let products = [...productList]
-      let index = products.findIndex( el => el.id === data.producto.id )
-      products[index].cantidad+= parseInt(count)
-      setProductList(products)  
-    }else{
-      setProductList((old)=> [...old, product])
-      setCount('')
-      setProductSelected('')
-      setProviderId('')
-    }
-  }
-
-
-  const getSellData = (id)=>{
-    let listaFiltrada = JSON.parse(localStorage.getItem('puntoVenta')) || []
-    let listaF = listaFiltrada.find(e => e.id == id)
-    setDataSell(listaF)
-
-   let cliente= clientes.find(e=> e.nombre == listaF.cliente)
-   setProductList(listaF.productos)
-   setClienteSelected(listaF.cliente)
-   setMontoRecibido(listaF.montoRecibido)
-  }
-
-  const RowOptions = ({ id, data }) => {
-    // ** Hooks
-    const dispatch = useDispatch()
-  
-    // ** State
-    const [anchorEl, setAnchorEl] = useState(null)
-    const rowOptionsOpen = Boolean(anchorEl)
-  
-  
-  
-    const handleRowOptionsClick = event => {
-      setAnchorEl(event.currentTarget)
-    }
-  
-    const handleRowOptionsClose = () => {
-      setAnchorEl(null)
-    }
-  
-   
-  
-    const handleDelete = () => {
-
-      const objWithIdIndex = productList.findIndex((obj) => obj.id === data.id);
-      const newArry = [...productList]
-      newArry.splice(objWithIdIndex, 1);
-      setProductList(newArry)
-        }
-
-     
-  
-    // const getTyperPersons =  async() =>{
-    //   try {
-    //       const response = await getAllTyperPersons()
-    //       if(response.status === 200){
-    //         console.log(response.data)
-    //         setTypePersons(response.data)
-  
-    //       }
-          
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
-    
-  
-    return (
-      <>
-       <Button size='medium' sx={{ mr: 2}} onClick={handleDelete}>
-       <Icon icon='tabler:trash' fontSize={20} />
-            Eliminar
-          </Button>
-     
-      </>
-    )
-  }
-  
-
-
-
-
-  const handleChangeSucursal = (event, newValue) => {
-  }
-
-  const onSubmit = async(data) =>{
-
-    let number= Math.floor(Math.random() *200)
-
-    let arrayJson = []
-
-    let dataJson = {
-      id:number ,
-      fecha: new Date().toLocaleDateString('es-MX'),
-      cliente: clienteSelected,
-      vendedor: 'Administrador',
-      monto: (total.toFixed(2)),
-      montoRecibido: montoRecibido,
-      cambio:cambio,
-      tipoPago: tipoPagoSelected.nombre,
-      fechaCobro: new Date().toLocaleDateString('es-MX'),
-      estado:'cobrado',
-      productos:productList,
-    }
-
-
-
-    let listaPorCobrar = localStorage.getItem("puntoVenta");
-   
-      let actualizarDatos = JSON.parse(listaPorCobrar)
-      let listaActulizar = actualizarDatos.findIndex(e => e.id == idVenta)     
-      actualizarDatos[listaActulizar] = dataJson
-      localStorage.setItem('puntoVenta',JSON.stringify(actualizarDatos) )
-
-
-    toast.success('Cobro realizado con éxito')
-    router.push('/point-of-sale')
-
-  }
-
-
-
-
-
-  const defaultValues = {
-    cometnarios: '',
-
-  }
-
-  const {
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    defaultValues,
-    mode: 'onChange',
-  })
-
 
   return (
     <>
     <Card>
       <CardHeader title='Visualizar recibo de venta' />
       <Divider sx={{ m: '0 !important' }} />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <CardContent>
           <Grid container spacing={5}>
-         
-         
-           
-           
+      
             <Grid item xs={12} sm={6}>
             <TextField fullWidth name='cliente'  value={'ADRIAN AGUILERA MORENO'}  label='Cliente' InputProps={{
           readOnly:true

@@ -566,6 +566,7 @@ const FormLayoutsSeparator = () => {
             onChange={(e, data) =>{setBranchOfficeSelectedDestination(data)
               getWarehouseDestination(data.id )
             }}
+            disabled={warehouse.length == 0}
                 options={branchOffice}
                 id='autocomplete-outlined'
                 getOptionLabel={option => option.nombre || ''}

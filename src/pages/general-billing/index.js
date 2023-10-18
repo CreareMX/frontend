@@ -21,7 +21,8 @@ import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
 import { DataGrid, esES } from '@mui/x-data-grid'
 import Select from '@mui/material/Select'
-import DialogAlert from 'src/views/components/dialogs/DialogAlert'
+import DialogAlert from 'src/views/components/dialogs/DialogBilling'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -44,7 +45,7 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/point-of-sale/TableHeader'
+import TableHeader from 'src/views/apps/general-billing/TableHeader'
 import AddUserDrawer from 'src/views/apps/branch-office/AddbranchOfficeDrawer'
 import SidebarEditPeople from 'src/views/apps/branch-office/EditBranchOffice'
 import { getAllRequesitions, changeStatusReqById } from 'src/api/RequestApi'
@@ -72,9 +73,9 @@ const PersonsType = ({ apiData }) => {
   const [nombre,setNombre] = useState('')
   const [currentPerson, setCurrentPerson] = useState({})
   const [id,setId] = useState(null)
-  const [puntoVentaLista,setPuntoVentaLista] = useState([])
+  const [cotizacionesLista,setCotizacionesLista] = useState([])
   const [listaPuntoDeVenta,setlListaPuntoDeVenta] = useState([])
-
+  const [idPedido,setIdPedido] = useState(null)
 
 
 
@@ -82,11 +83,15 @@ const PersonsType = ({ apiData }) => {
     llenarLista()
    },[])
 
+
+
+   
+
    const llenarLista = ()=>{
-    let listaFiltrada = JSON.parse(localStorage.getItem('puntoVenta')) || []
-    let listaF = listaFiltrada.filter(e => e.estado == 'vendido' || e.estado == 'cobrado' || e.estado == 'cancelarPV' || e.estado == 'vendidoP')
-    setPuntoVentaLista(listaF)
+    let listaFiltrada = JSON.parse(localStorage.getItem('recibosPubG')) || []
+
     setlListaPuntoDeVenta(listaFiltrada)
+    setCotizacionesLista(listaFiltrada)
    }
 
   const RowOptions = ({ id, data }) => {
@@ -128,18 +133,22 @@ const PersonsType = ({ apiData }) => {
     }
     }
     
-    const cancelar = async(id) =>{
-      let lista = [...listaPuntoDeVenta]
-      let objWithIdIndex = lista.findIndex((obj) => obj.id === id);
-      lista[objWithIdIndex].estado = 'cancelarPV'
 
-      JSON.stringify(localStorage.setItem('puntoVenta', JSON.stringify(lista) ))
-      setPuntoVentaLista(lista)
-      toast.success('Orden cancelada con éxito')
-      llenarLista()
-    }
   
+    // const getRequesitions =  async() =>{
+    //   try {
+    //       const response = await getAllTyperPersons()
+    //       if(response.status === 200){
+    //         console.log(response.data)
+    //         setTypePersons(response.data)
   
+    //       }
+          
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // }
+    
   
     return (
       <>
@@ -160,61 +169,57 @@ const PersonsType = ({ apiData }) => {
             horizontal: 'right'
           }}
           PaperProps={{ style: { minWidth: '8rem' } }}
-        >
-          {/* <MenuItem
-            component={Link}
-            sx={{ '& svg': { mr: 2 } }}
-            href='/apps/user/view/account'
-            onClick={handleRowOptionsClose}
-          >
-            <Icon icon='tabler:eye' fontSize={20} />
-            View
-          </MenuItem>
-          */}
-          {/* <MenuItem onClick={()=>{handleEdit(data.id)}} sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:edit' fontSize={20} />
-            Editar
-          </MenuItem>  */}
-          { 
-          (data.estado == 'vendido' || data.estado == 'vendidoP') &&
-          <MenuItem onClick={()=>{
+        >      
+            <MenuItem onClick={()=>{
+              setIdPedido(data.id)
+              setOpenModal(true)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='tabler:eye' fontSize={20} />
+              Visualizar
+            </MenuItem>
+             
+            <MenuItem onClick={()=>{
+              setIdPedido(data.id)
+              setOpenModal(true)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='streamline:money-cash-bill-2-currency-billing-payment-finance-cash-bill-money-accounting' fontSize={20} />
+              Facturar
+            </MenuItem>
+             
+            <MenuItem onClick={()=>{
+              setIdPedido(data.id)
+              setOpenModal(true)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='material-symbols:download' fontSize={20} />
+              Descargar XML
+            </MenuItem>
+            <MenuItem onClick={()=>{
+              setIdPedido(data.id)
+              setOpenModal(true)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='material-symbols:download' fontSize={20} />
+              Descargar PDF
+            </MenuItem>
+            <MenuItem onClick={()=>{
+              setIdPedido(data.id)
+              setOpenModal(true)
+              }}
+               sx={{ '& svg': { mr: 2 } }}>
+              <Icon icon='icon-park-outline:send-email' fontSize={20} />
+              Enviar por correo
+            </MenuItem>
+            <MenuItem onClick={()=>{
             cancelar(data.id)
             }}
              sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='mdi:file-cancel-outline' fontSize={20} />
             Cancelar
           </MenuItem>
-         }
-          { 
-          (data.estado == 'vendido' || data.estado == 'vendidoP') &&
-          <MenuItem onClick={()=>{
-              cobrar(data.id)
-              }}
-               sx={{ '& svg': { mr: 2 } }}>
-              <Icon icon='fluent:money-24-regular' fontSize={20} />
-              Cobrar
-            </MenuItem>
-          }
-           { 
-          data.estado == 'cobrado'  &&
-          <MenuItem onClick={()=>{
-            visualizar(data.id)
-              }}
-               sx={{ '& svg': { mr: 2 } }}>
-              <Icon icon='mdi:eye-outline' fontSize={20} />
-              Visualizar
-            </MenuItem>
-          }
-          { 
-          data.estado == 'cancelarPV'  &&
-          <MenuItem onClick={()=>{
-            visualizar(data.id)
-              }}
-               sx={{ '& svg': { mr: 2 } }}>
-              Sin opciones
-            </MenuItem>
-          }
-        
+          
         </Menu>
       </>
     )
@@ -225,8 +230,8 @@ const PersonsType = ({ apiData }) => {
   const columns = [
     {
       flex: 0.25,
-      maxWidth:80,
       minWidth: 80,
+      maxWidth:80,
       field: 'id',
       headerName: 'Id',
       renderCell: ({ row }) => {
@@ -252,15 +257,15 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 130,
-      maxWidth:130,
-      field: 'fecha',
-      headerName: 'Fecha',
+      minWidth: 100,
+      maxWidth:120,
+      field: 'Recibo',
+      headerName: 'recibo',
       renderCell: ({ row }) => {
-
+  
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography
                 noWrap
                 sx={{
@@ -270,7 +275,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.fecha}
+                {row.recibo}
               </Typography>
             </Box>
           </Box>
@@ -280,7 +285,7 @@ const PersonsType = ({ apiData }) => {
     {
       flex: 0.25,
       minWidth: 180,
-      maxWidth:180,
+      maxWidth:380,
       field: 'cliente',
       headerName: 'Cliente',
       renderCell: ({ row }) => {
@@ -306,10 +311,9 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 180,
-      maxWidth:180,
-      field: 'vendedor',
-      headerName: 'Vendedor',
+      minWidth: 100,
+      field: 'Total',
+      headerName: 'total',
       renderCell: ({ row }) => {
   
         return (
@@ -324,7 +328,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.vendedor}
+                {row.total.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })}
               </Typography>
             </Box>
           </Box>
@@ -333,15 +337,14 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 110,
-      maxWidth:110,
-      field: 'tipo',
-      headerName: 'tipo',
+      minWidth: 160,
+      field: 'fecha',
+      headerName: 'Fecha',
       renderCell: ({ row }) => {
-  
+
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column' }}>
               <Typography
                 noWrap
                 sx={{
@@ -351,7 +354,7 @@ const PersonsType = ({ apiData }) => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                {row.estado == 'vendidoP' ? 'Pedido' : 'Venta'}
+                {row.fecha}
               </Typography>
             </Box>
           </Box>
@@ -360,62 +363,8 @@ const PersonsType = ({ apiData }) => {
     },
     {
       flex: 0.25,
-      minWidth: 130,
-      maxWidth:130,
-      field: 'monto',
-      headerName: 'Monto',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                $ {row.monto}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      minWidth: 130,
-      maxWidth:130,
-      field: 'tipoPago',
-      headerName: 'Tipo de pago',
-      renderCell: ({ row }) => {
-  
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography
-                noWrap
-                sx={{
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: 'text.secondary',
-                  '&:hover': { color: 'primary.main' }
-                }}
-              >
-                {row?.tipoPago ? row?.tipoPago : 'N/A' }
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      minWidth: 130,
-      maxWidth:130,
+      minWidth: 150,
+      maxWidth: 150,
       field: 'estado',
       headerName: 'Estado',
       renderCell: ({ row }) => {
@@ -427,8 +376,8 @@ const PersonsType = ({ apiData }) => {
           rounded
           skin='light'
           size='small'
-          label={row?.estado == 'vendido' ? 'pendiente' : row?.estado == 'vendidoP' ? 'pendiente' : row?.estado == 'cobrado' ? 'cobrado' : 'cancelado'}
-          color={row?.estado == 'vendido' ? 'info' :  row?.estado == 'vendidoP' ? 'info' : row?.estado == 'cobrado' ? 'success' : 'error'}
+          label={row.estado == 'Pendiente' ? 'Pendiente' : 'Facturado'}
+          color={row.estado == 'Pendiente' ? 'info'  : 'success'}
           sx={{ textTransform: 'uppercase' }}
         />
             </Box>
@@ -436,16 +385,17 @@ const PersonsType = ({ apiData }) => {
         )
       }
     },
-    {
-      flex: 0.1,
-      minWidth: 130,
-      maxWidth:130,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Acciones',
-      renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
-    }
+    
+    // {
+    //   flex: 0.1,
+    //   minWidth: 200,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Acciones',
+    //   renderCell: ({ row }) => <RowOptions data={row} id={row.id} />
+    // }
   ]
+
 
   // ** Hooks
   const dispatch = useDispatch()
@@ -484,147 +434,65 @@ const PersonsType = ({ apiData }) => {
     }
   }
 
-  const cobrar = async(id) =>{
-  router.push('point-of-sale/sell/'+id)
-   
+  const vender = async(data) =>{
+    toast.success('Facturación con éxito')
 }
 
-const visualizar = async(id) =>{
-  router.push('point-of-sale/view/'+id)
-   
-}
-
-const cancelarPago = async(id) =>{
+const cancelar = async(id) =>{
   let lista = [...listaPuntoDeVenta]
   let objWithIdIndex = lista.findIndex((obj) => obj.id === id);
-  lista[objWithIdIndex].estado = 'canceladoPV'
+  lista[objWithIdIndex].estado = 'cancelarA'
 
   JSON.stringify(localStorage.setItem('puntoVenta', JSON.stringify(lista) ))
   setCotizacionesLista(lista)
-  toast.success('Registro cancelado')
+  toast.success('Pedido cancelado con éxito')
   llenarLista()
+}
 
 
- }
   
-  const handleDelete = async() => {
-  
+  const handleDelete = async(data) => {
     setOpenModal(false)
-    try {
-      let data = {id}
-      
-      const response = await deleteBranchOffice(data, 1)
-
-      if(response.status == 200){
-       await getRequesitions()
-        toast.success('Sucursal eliminada con éxito')
-
-      }
-      
-    } catch (error) {
-      console.log(error)
-    }
-
+    
+    vender(data)
+    
   }
 
-
+  useEffect(() => {
+    getRequesitions()
+  },[]);
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setEditUserOpen(!editUserOpen)
 
+  const sucessSubmit = () =>{
+    getRequesitions()
+  }
 
   const closeModal = () =>{
       setOpenModal(false)
   }
 
+  const facturarGeneral = (data) =>{
+    
+    let lista = []
+    JSON.stringify(localStorage.setItem('recibosPubG', JSON.stringify(lista) ))
+    
+       toast.success('Facturacíon publico general realizada con exito')
+      setCotizacionesLista(lista)  
+    
+  }
+
   return (
     <Grid container spacing={6.5}>
-      {/* <Grid item xs={12}>
-        {apiData && (
-          <Grid container spacing={6}>
-            {apiData.statsHorizontalWithDetails.map((item, index) => {
-              return (
-                <Grid item xs={12} md={3} sm={6} key={index}>
-                  <CardStatsHorizontalWithDetails {...item} />
-                </Grid>
-              )
-            })}
-          </Grid>
-        )}
-      </Grid> */}
       <Grid item xs={12}>
         <Card>
-          {/* <CardHeader title='Search Filters' />
-          <CardContent>
-            <Grid container spacing={6}>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='role-select'>Select Role</InputLabel>
-                  <Select
-                    fullWidth
-                    value={role}
-                    id='select-role'
-                    label='Select Role'
-                    labelId='role-select'
-                    onChange={handleRoleChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='admin'>Admin</MenuItem>
-                    <MenuItem value='author'>Author</MenuItem>
-                    <MenuItem value='editor'>Editor</MenuItem>
-                    <MenuItem value='maintainer'>Maintainer</MenuItem>
-                    <MenuItem value='subscriber'>Subscriber</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='plan-select'>Select Plan</InputLabel>
-                  <Select
-                    fullWidth
-                    value={plan}
-                    id='select-plan'
-                    label='Select Plan'
-                    labelId='plan-select'
-                    onChange={handlePlanChange}
-                    inputProps={{ placeholder: 'Select Plan' }}
-                  >
-                    <MenuItem value=''>Select Plan</MenuItem>
-                    <MenuItem value='basic'>Basic</MenuItem>
-                    <MenuItem value='company'>Company</MenuItem>
-                    <MenuItem value='enterprise'>Enterprise</MenuItem>
-                    <MenuItem value='team'>Team</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='status-select'>Select Status</InputLabel>
-                  <Select
-                    fullWidth
-                    value={status}
-                    id='select-status'
-                    label='Select Status'
-                    labelId='status-select'
-                    onChange={handleStatusChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='pending'>Pending</MenuItem>
-                    <MenuItem value='active'>Active</MenuItem>
-                    <MenuItem value='inactive'>Inactive</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </CardContent> */}
           <Divider sx={{ m: '0 !important' }} />
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
+          <TableHeader value={value} handleFilter={handleFilter} onBilling={facturarGeneral} toggle={toggleAddUserDrawer} />
           <DataGrid
             autoHeight
             rowHeight={62}
-            rows={puntoVentaLista}
+            rows={cotizacionesLista}
             columns={columns}
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}  
             disableRowSelectionOnClick
@@ -636,10 +504,13 @@ const cancelarPago = async(id) =>{
         </Card>
       </Grid>
 
-
+      <AddUserDrawer open={addUserOpen} sucess={sucessSubmit} toggle={toggleAddUserDrawer} />
+      <SidebarEditPeople open={editUserOpen} sucess={sucessSubmit} editPerson={currentPerson} toggle={toggleEditUserDrawer} />
 
       { openModal &&
-       <DialogAlert open={openModal} title={'Desea cancelar la orden de compra'} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+       <DatePickerWrapper>
+       <DialogAlert open={openModal} title={'Facturar'} content={'Esta acción no se puede revertir'} onConfirm={handleDelete} handleClose={closeModal}/> 
+       </DatePickerWrapper>
         }
     </Grid>
   )

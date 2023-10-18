@@ -4,7 +4,9 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
-
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import { FormControl, InputLabel, Autocomplete } from '@mui/material'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -14,17 +16,6 @@ const TableHeader = props => {
 
   // ** Props
   const { handleFilter, toggle, value } = props
-
-  const printPdf = ()=>{
-    let pdf1 = ''
-    const linkSource = `data:application/xml;base64,${pdf1}`;
-    const downloadLink = document.createElement("a");
-    const fileName = "file.pdf";
-
-    downloadLink.href = linkSource;
-    downloadLink.download = fileName;
-    downloadLink.click();
-  }
 
   return (
     <Box
@@ -52,9 +43,31 @@ const TableHeader = props => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                Cotizaciones
+                Reportes
               </Typography>
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* <FormControl size='small' sx={{ mr: 4, width:'auto' }}>
+                  <InputLabel id='role-select'>Estado</InputLabel>
+                  <Select
+
+                    id='select-role'
+                    label='Estado'
+                    labelId='role-select'
+                    inputProps={{ placeholder: 'Estado' }}
+                  >
+                    <MenuItem value='1'>Pendiente</MenuItem>
+                    <MenuItem value='2'>Facturado</MenuItem>
+                    <MenuItem value='3'>Cancelado</MenuItem>
+                  </Select>
+                </FormControl> */}
+                {/* <Autocomplete
+                size='small'
+                sx={{minWidth:170, mr:4}}
+                options={['Pendiente','Facturado', 'Cancelado']}
+                id='autocomplete-outlined'
+                getOptionLabel={option => option }
+                renderInput={params => <TextField {...params}  label='Estado' />}
+            /> */}
         <TextField
           size='small'
           value={value}
@@ -63,10 +76,7 @@ const TableHeader = props => {
           onChange={e => handleFilter(e.target.value)}
         />
 
-        <Button onClick={()=>router.push('/quotes/add')} variant='contained' sx={{ '& svg': { mr: 2 } }}>
-          <Icon fontSize='1.125rem' icon='tabler:plus' />
-          Nuevo
-        </Button>
+      
       </Box>
     </Box>
   )

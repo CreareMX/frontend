@@ -141,6 +141,24 @@ const navigation = () => {
         },
       ]
     },
+    {
+      title: 'Facturación',
+      icon: 'streamline:money-cash-bill-3-accounting-billing-payment-finance-cash-currency-money-bill',
+      children: [
+        {
+          title: 'Facturar',
+          path: '/billing'
+        },
+        {
+          title: 'Pub. Gral',
+          path: '/general-billing'
+        },
+        {
+          title: 'Reportes',
+          path: '/report-billing'
+        }
+      ]
+    },
 
     
     // {

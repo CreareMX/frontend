@@ -278,6 +278,12 @@ export const getAllTyperPersons = async () =>{
    }
 
 
+   export const getAllVentas = async () =>{
+    
+    const _URL = `/api/Venta/Ventas/all`;
+   
+       return axiosApi.get(_URL)
+   }
 
 
 

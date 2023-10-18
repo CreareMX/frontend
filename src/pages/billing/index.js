@@ -131,7 +131,9 @@ const PersonsType = ({ apiData }) => {
     }
     }
     
-
+    const visualizar = () =>{
+      router.push(`billing/view/${data.id}`);
+    }
   
     // const getVentas =  async() =>{
     //   try {
@@ -169,7 +171,7 @@ const PersonsType = ({ apiData }) => {
           PaperProps={{ style: { minWidth: '8rem' } }}
         >      
             <MenuItem onClick={()=>{
-              router.push('billing/view/[id]', `billing/view/${data.id}`);
+              visualizar()
     }}
                sx={{ '& svg': { mr: 2 } }}>
               <Icon icon='tabler:eye' fontSize={20} />
